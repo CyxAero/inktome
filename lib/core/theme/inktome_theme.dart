@@ -1,18 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:inktome/core/theme/inktome_colors.dart';
-import 'package:inktome/core/theme/inktome_spacing.dart';
-import 'package:inktome/core/theme/inktome_typography.dart';
-
-/// Inktome theme system for Flutter app.
+/// Inktome ThemeData definitions — light and dark.
 ///
-/// Provides light and dark themes with modern brutalist design.
-/// Uses pill shapes, underline inputs, and high contrast.
+/// Both themes share identical component structure.
+/// Only colours differ, sourced from [lightColorScheme] and
+/// [darkColorScheme] in `inktome_color_schemes.dart`.
 ///
 /// See also:
-/// * [InktomeColors] for color definitions
-/// * [InktomeSpacing] for layout and spacing
-/// * [InktomeTextStyles] for typography
+/// * [InktomeColors] for all hex colour definitions
+/// * [InktomeSpacing] for layout dimensions and font sizes
+/// * [InktomeTextStyles] for typography shape definitions
+/// * `inktome_color_schemes.dart` for the raw ColorScheme data
 ///
 /// Example usage:
 /// ```dart
@@ -23,132 +19,105 @@ import 'package:inktome/core/theme/inktome_typography.dart';
 /// )
 /// ```
 
-// ? THEME DATA
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:inktome/core/theme/inktome_color_schemes.dart';
+import 'package:inktome/core/theme/inktome_colors.dart';
+import 'package:inktome/core/theme/inktome_spacing.dart';
+import 'package:inktome/core/theme/inktome_typography.dart';
 
-/// Light theme for Inktome app.
+
+// ? MARK: LIGHT THEME
+
+/// Light theme for Inktome.
 ///
-/// Modern brutalist design with:
-/// - Pill-shaped buttons and chips
-/// - Squircle input fields with subtle borders
-/// - High contrast black/white palette
-///
-/// Use this for MaterialApp.theme property.
+/// Scaffold background: [InktomeColors.white].
+/// Primary text: [InktomeColors.black].
+/// Muted text: [InktomeColors.greyMuted].
 ThemeData inktomeLightTheme() {
-  // The ColorScheme tells Material 3 widgets which colours to use
-  // for which roles. Even if you never reference these roles
-  // directly in your own widgets, Flutter's built-in components
-  // do — so they need to be correct or things render oddly.
-  const colorScheme = ColorScheme(
-    brightness: Brightness.light,
-
-    // primary = the main action colour.
-    // In monochromatic mode this is simply black.
-    // When you introduce richBlue later, swap it here and
-    // every primary-reading widget updates automatically.
-    primary: InktomeColors.black,
-    onPrimary: InktomeColors.white, // text/icons on top of primary
-    // secondary = currently mirrors primary.
-    // A separate slot exists so you can differentiate later.
-    secondary: InktomeColors.black,
-    onSecondary: InktomeColors.white,
-
-    // surface = the default background for sheets, dialogs, cards.
-    // onSurface = text and icons that sit on top of surface.
-    surface: InktomeColors.white,
-    onSurface: InktomeColors.black,
-
-    // surfaceContainerLowest = the scaffold (page) background.
-    // This is the 'page' your content sits on.
-    surfaceContainerLowest: InktomeColors.white,
-
-    // onSurfaceVariant = muted/secondary text and inactive icons.
-    // Used by Flutter internally for things like hint text,
-    // inactive nav labels, placeholder content.
-    onSurfaceVariant: InktomeColors.greyMuted,
-
-    outline: InktomeColors.greyMid,
-    outlineVariant: InktomeColors.greyLight,
-
-    error: InktomeColors.brickEmber,
-    onError: InktomeColors.pureWhite,
-    errorContainer: InktomeColors.cardOnWhite,
-    onErrorContainer: InktomeColors.brickEmber,
-  );
-
   return ThemeData(
     useMaterial3: true,
-    colorScheme: colorScheme,
+    colorScheme: lightColorScheme,
 
-    // Page background.
-    // On light screens this is InktomeColors.white.
-    // Individual screens can override via Scaffold(backgroundColor:)
-    // if they need the black background instead.
+    // The page background behind all content.
     scaffoldBackgroundColor: InktomeColors.white,
 
-    // Text theme using custom fonts with theme-aware colors
+    // ? MARK: Text theme
+    //
+    // InktomeTextStyles defines SHAPE only — font family, size,
+    // weight, letter spacing, line height. No colour lives there.
+    //
+    // Colour is applied here, once per theme, using the WithColor
+    // factory methods. Any widget that reads from
+    // Theme.of(context).textTheme automatically gets the correct
+    // colour for the current mode — no manual passing required.
+    //
+    // Rule: always read from Theme.of(context).textTheme in widgets.
+    // Never call InktomeTextStyles directly in a build method —
+    // that bypasses this colour layer entirely.
     textTheme: TextTheme(
-      displayLarge: InktomeTextStyles.displayLarge,
-      displayMedium: InktomeTextStyles.display,
-      displaySmall: InktomeTextStyles.headingLarge,
-      headlineLarge: InktomeTextStyles.headingLarge,
-      headlineMedium: InktomeTextStyles.headingMedium,
-      headlineSmall: InktomeTextStyles.headingSmall,
-      titleLarge: InktomeTextStyles.headingSmall,
-      titleMedium: InktomeTextStyles.bodyLarge,
-      titleSmall: InktomeTextStyles.body,
-      bodyLarge: InktomeTextStyles.bodyLarge,
-      bodyMedium: InktomeTextStyles.body,
-      bodySmall: InktomeTextStyles.bodySmall,
-      labelLarge: InktomeTextStyles.labelLarge,
-      labelMedium: InktomeTextStyles.label,
-      labelSmall: InktomeTextStyles.labelSmall,
+      displayLarge: InktomeTextStyles.displayLargeWithColor(
+        InktomeColors.black,
+      ),
+      displayMedium: InktomeTextStyles.displayWithColor(InktomeColors.black),
+      displaySmall: InktomeTextStyles.headingLargeWithColor(
+        InktomeColors.black,
+      ),
+      headlineLarge: InktomeTextStyles.headingLargeWithColor(
+        InktomeColors.black,
+      ),
+      headlineMedium: InktomeTextStyles.headingMediumWithColor(
+        InktomeColors.black,
+      ),
+      headlineSmall: InktomeTextStyles.headingSmallWithColor(
+        InktomeColors.black,
+      ),
+      titleLarge: InktomeTextStyles.headingSmallWithColor(InktomeColors.black),
+      titleMedium: InktomeTextStyles.bodyLargeWithColor(InktomeColors.black),
+      titleSmall: InktomeTextStyles.bodyWithColor(InktomeColors.black),
+      bodyLarge: InktomeTextStyles.bodyLargeWithColor(InktomeColors.black),
+      bodyMedium: InktomeTextStyles.bodyWithColor(InktomeColors.black),
+      bodySmall: InktomeTextStyles.bodySmallWithColor(InktomeColors.black),
+      // Labels use greyMuted rather than black — they are UI chrome, not content. Chips, nav labels, captions should recede.
+      labelLarge: InktomeTextStyles.labelLargeWithColor(
+        InktomeColors.greyMuted,
+      ),
+      labelMedium: InktomeTextStyles.labelWithColor(InktomeColors.greyMuted),
+      labelSmall: InktomeTextStyles.labelSmallWithColor(
+        InktomeColors.greyMuted,
+      ),
     ),
 
-    // ? APP BAR
-    //
-    // Transparent so it always matches whatever background the
-    // current screen uses — no hardcoded colour here.
-    // The status bar icons are dark on light backgrounds.
-    // On screens with a black background, wrap your Scaffold
-    // in an AnnotatedRegion<SystemUiOverlayStyle> to flip them:
-    //
-    //   AnnotatedRegion<SystemUiOverlayStyle>(
-    //     value: SystemUiOverlayStyle.light, // white icons
-    //     child: Scaffold(
-    //       backgroundColor: InktomeColors.black,
-    //       ...
-    //     ),
-    //   )
+    // ? MARK: App bar
     appBarTheme: AppBarTheme(
+      // Transparent background so the AppBar blends into whatever screen background sits behind it.
       backgroundColor: Colors.transparent,
+      // foregroundColor covers the back-chevron, action icons, and any Text widget inside the AppBar that has no explicit style.
       foregroundColor: InktomeColors.black,
       elevation: 0,
-      scrolledUnderElevation: 0, // no shadow when content scrolls under
+      // Material 3 by default adds a surface tint and shadow when content scrolls under the app bar. Setting this to 0 disables that behaviour, keeping the bar visually flat and part of the same surface as the scaffold.
+      scrolledUnderElevation: 0,
       centerTitle: false,
-      titleTextStyle: InktomeTextStyles.headingSmall,
+      // IMPORTANT: AppBar does NOT inherit from the TextTheme for its title. It reads this property directly. If this style has no colour, the title falls back to AppBar's internal DefaultTextStyle which is always white — regardless of theme. Always set an explicit colour here.
+      titleTextStyle: InktomeTextStyles.headingSmallWithColor(
+        InktomeColors.black,
+      ),
       systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark, // dark icons on light bg
       ),
     ),
 
-    // ? FILLED BUTTON
-    //
-    // The primary action on any screen.
-    // Black background, white Londrina Solid label.
-    // Use at most once per screen as the dominant action.
-    //
+    // ? MARK: Filled button
     // Usage:
-    //   FilledButton(
-    //     onPressed: () {},
-    //     child: const Text('add book'),
-    //   )
+    //   FilledButton(onPressed: () {}, child: const Text('add book'))
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         backgroundColor: InktomeColors.black,
         foregroundColor: InktomeColors.white,
-        textStyle: InktomeTextStyles.button,
-        minimumSize: const Size(0, 48), // 48sp minimum tap target height
+        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.white),
+        // minimumSize: 48sp height satisfies Material touch target guidelines. Width is 0 so the button shrinks to fit its label.
+        minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.lg,
           vertical: InktomeSpacing.sm,
@@ -161,17 +130,9 @@ ThemeData inktomeLightTheme() {
       ),
     ),
 
-    // ? OUTLINED BUTTON
-    //
-    // Secondary action — sits alongside a filled button or alone
-    // when the action has moderate emphasis.
-    // Transparent background, 2pt black stroke.
-    //
+    // ? MARK: Outlined button
     // Usage:
-    //   OutlinedButton(
-    //     onPressed: () {},
-    //     child: const Text('cancel'),
-    //   )
+    //   OutlinedButton(onPressed: () {}, child: const Text('cancel'))
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: InktomeColors.black,
@@ -189,20 +150,13 @@ ThemeData inktomeLightTheme() {
       ),
     ),
 
-    // ? TEXT BUTTON
-    //
+    // ? MARK: Text button
     // Low-emphasis action — no container, no border.
     // Use for things like 'skip', 'learn more', 'undo'.
-    // Never for destructive actions (those should be outlined
-    // or have an explicit warning state).
-    //
-    // Will switch to richBlue foreground when accent is introduced.
+    // Never for destructive actions (use outlined with a warning state).
     //
     // Usage:
-    //   TextButton(
-    //     onPressed: () {},
-    //     child: const Text('skip for now'),
-    //   )
+    //   TextButton(onPressed: () {}, child: const Text('skip for now'))
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: InktomeColors.black,
@@ -214,32 +168,21 @@ ThemeData inktomeLightTheme() {
       ),
     ),
 
-    // ? INPUT DECORATION
+    // ? MARK: Input decoration
+    // Used by TextField and TextFormField automatically.
     //
-    // Used by TextField and TextFormField.
-    // Filled background matches card surface for hierarchy.
-    // Subtle squircle shape with full border.
-    // Border color changes on focus and error.
-    //
-    // If a specific input needs different styling (e.g. a search
-    // bar with different background), override InputDecoration
-    // directly on that widget rather than changing this default.
-    //
-    // Usage:
-    //   TextField(
-    //     decoration: InputDecoration(
-    //       hintText: 'Search your library',
-    //     ),
-    //   )
+    // If a specific input needs different styling (e.g. a borderless
+    // search bar), override InputDecoration directly on that widget
+    // rather than changing this default.
     inputDecorationTheme: InputDecorationTheme(
-      filled: true, // filled background to match surface
-      fillColor: InktomeColors.cardOnWhite, // matches light theme surface
+      filled: true,
+      fillColor: InktomeColors.cardOnWhite,
+      // Preserves comfortable vertical padding inside the field. Set to true only if you need compact form rows.
       isDense: false,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: InktomeSpacing.md,
         vertical: InktomeSpacing.md,
       ),
-      // Default border (not focused, no error)
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(InktomeSpacing.radiusMd),
         borderSide: const BorderSide(color: InktomeColors.greyMid, width: 1.0),
@@ -267,19 +210,61 @@ ThemeData inktomeLightTheme() {
         ),
       ),
       hintStyle: InktomeTextStyles.bodyWithColor(InktomeColors.greyMuted),
-      labelStyle: InktomeTextStyles.labelLarge,
+      labelStyle: InktomeTextStyles.labelLargeWithColor(
+        InktomeColors.greyMuted,
+      ),
       errorStyle: InktomeTextStyles.labelLargeWithColor(
         InktomeColors.brickEmber,
       ),
     ),
 
-    // ? CARD
+    // ? MARK: CHIP
     //
-    // Cards sit on top of the scaffold background.
-    // Use for content containers, dialogs, sheets.
+    // backgroundColor: transparent — unselected chips show no fill,
+    // just the border stroke defined in side.
+    //
+    // selectedColor: black — when a FilterChip or ChoiceChip is
+    // selected in light mode, it fills with black and the label
+    // switches to white via secondaryLabelStyle, maintaining contrast.
+    //
+    // labelStyle — text colour for unselected chips (black on transparent).
+    // secondaryLabelStyle — text colour when selected (white on black).
+    //
+    // side: greyMid border — same border colour as idle input fields,
+    // keeping the visual language consistent across interactive elements.
+    chipTheme: ChipThemeData(
+      backgroundColor: Colors.transparent,
+      selectedColor: InktomeColors.black,
+      labelStyle: InktomeTextStyles.labelLargeWithColor(InktomeColors.black),
+      secondaryLabelStyle: InktomeTextStyles.labelLargeWithColor(
+        InktomeColors.white,
+      ),
+      side: const BorderSide(color: InktomeColors.greyMid, width: 1.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: InktomeSpacing.sm,
+        vertical: InktomeSpacing.xs,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(InktomeSpacing.radiusPill),
+        ),
+      ),
+    ),
+
+    // ? MARK: CARD
+    //
+    // Cards sit one layer above the scaffold.
+    // color: colorScheme.surface — reads from the ColorScheme so
+    // it automatically updates if you ever change the surface colour.
+    //
+    // Shape hierarchy is communicated by colour contrast alone,
+    // not by shadow depth.
+    //
+    // shape: radiusMd — softer than a pill, appropriate for content
+    // containers that hold text and images rather than single actions.
     cardTheme: CardThemeData(
-      color: colorScheme.surface,
-      elevation: 0, // flat design
+      color: lightColorScheme.surface,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(InktomeSpacing.radiusMd),
       ),
@@ -287,61 +272,61 @@ ThemeData inktomeLightTheme() {
   );
 }
 
-/// Dark theme for Inktome app.
+// ? MARK: DARK THEME
+
+/// Dark theme for Inktome.
 ///
-/// Inverts the light theme with white backgrounds and black text.
-/// Maintains the same brutalist design language.
+/// Scaffold background: [InktomeColors.black].
+/// Primary text: [InktomeColors.white].
+/// Muted text: [InktomeColors.greyOnDark].
 ///
-/// Use this for MaterialApp.darkTheme property.
+/// Structure mirrors the light theme exactly.
+/// Only colours change — no layout or shape differences.
 ThemeData inktomeDarkTheme() {
-  const colorScheme = ColorScheme(
-    brightness: Brightness.dark,
-
-    primary: InktomeColors.white,
-    onPrimary: InktomeColors.black,
-
-    secondary: InktomeColors.white,
-    onSecondary: InktomeColors.black,
-
-    surface: InktomeColors.cardOnBlack,
-    onSurface: InktomeColors.white,
-
-    surfaceContainerLowest: InktomeColors.black,
-    onSurfaceVariant: InktomeColors.greyOnDark,
-
-    outline: InktomeColors.greyDark,
-    outlineVariant: InktomeColors.greyDarker,
-
-    error: InktomeColors.brickEmber,
-    onError: InktomeColors.pureBlack,
-    errorContainer: InktomeColors.brickEmber,
-    onErrorContainer: InktomeColors.pureWhite,
-  );
-
   return ThemeData(
     useMaterial3: true,
-    colorScheme: colorScheme,
-
+    colorScheme: darkColorScheme,
     scaffoldBackgroundColor: InktomeColors.black,
 
+    // ? MARK: Text theme (dark)
+    //
+    // Identical slot mapping to light theme.
+    // Primary text flips to white. Labels use greyOnDark —
+    // a lighter grey calibrated for legibility on dark backgrounds.
     textTheme: TextTheme(
-      displayLarge: InktomeTextStyles.displayLarge,
-      displayMedium: InktomeTextStyles.display,
-      displaySmall: InktomeTextStyles.headingLarge,
-      headlineLarge: InktomeTextStyles.headingLarge,
-      headlineMedium: InktomeTextStyles.headingMedium,
-      headlineSmall: InktomeTextStyles.headingSmall,
-      titleLarge: InktomeTextStyles.headingSmall,
-      titleMedium: InktomeTextStyles.bodyLarge,
-      titleSmall: InktomeTextStyles.body,
-      bodyLarge: InktomeTextStyles.bodyLarge,
-      bodyMedium: InktomeTextStyles.body,
-      bodySmall: InktomeTextStyles.bodySmall,
-      labelLarge: InktomeTextStyles.labelLarge,
-      labelMedium: InktomeTextStyles.label,
-      labelSmall: InktomeTextStyles.labelSmall,
+      displayLarge: InktomeTextStyles.displayLargeWithColor(
+        InktomeColors.white,
+      ),
+      displayMedium: InktomeTextStyles.displayWithColor(InktomeColors.white),
+      displaySmall: InktomeTextStyles.headingLargeWithColor(
+        InktomeColors.white,
+      ),
+      headlineLarge: InktomeTextStyles.headingLargeWithColor(
+        InktomeColors.white,
+      ),
+      headlineMedium: InktomeTextStyles.headingMediumWithColor(
+        InktomeColors.white,
+      ),
+      headlineSmall: InktomeTextStyles.headingSmallWithColor(
+        InktomeColors.white,
+      ),
+      titleLarge: InktomeTextStyles.headingSmallWithColor(InktomeColors.white),
+      titleMedium: InktomeTextStyles.bodyLargeWithColor(InktomeColors.white),
+      titleSmall: InktomeTextStyles.bodyWithColor(InktomeColors.white),
+      bodyLarge: InktomeTextStyles.bodyLargeWithColor(InktomeColors.white),
+      bodyMedium: InktomeTextStyles.bodyWithColor(InktomeColors.white),
+      bodySmall: InktomeTextStyles.bodySmallWithColor(InktomeColors.white),
+      labelLarge: InktomeTextStyles.labelLargeWithColor(
+        InktomeColors.greyOnDark,
+      ),
+      labelMedium: InktomeTextStyles.labelWithColor(InktomeColors.greyOnDark),
+      labelSmall: InktomeTextStyles.labelSmallWithColor(
+        InktomeColors.greyOnDark,
+      ),
     ),
 
+    // ? MARK: App bar (dark)
+    // statusBarIconBrightness flips to Brightness.light — renders white status bar icons, legible against dark scaffold.
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       foregroundColor: InktomeColors.white,
@@ -357,7 +342,8 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
-    // Filled button flips — white background, black label
+    // ? MARK: Filled button (dark)
+    // Flips from light — white background, black label.
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         backgroundColor: InktomeColors.white,
@@ -376,7 +362,8 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
-    // Outlined button flips — white stroke, white label
+    // ? MARK: Outlined button (dark)
+    // White stroke, white label — transparent background preserved.
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: InktomeColors.white,
@@ -394,6 +381,7 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
+    // MARK: Text button (dark)
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: InktomeColors.white,
@@ -405,9 +393,12 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
+    // ? MARK: Input decoration (dark)
+    // fillColor flips to cardOnBlack — one step lighter than the black scaffold, same visual logic as cardOnWhite in light mode.
+    // Focus border stays white for maximum contrast on dark bg.
     inputDecorationTheme: InputDecorationTheme(
-      filled: true, // filled background to match surface
-      fillColor: InktomeColors.cardOnBlack, // matches dark theme surface
+      filled: true,
+      fillColor: InktomeColors.cardOnBlack,
       isDense: false,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: InktomeSpacing.md,
@@ -448,6 +439,16 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
+    // ? MARK: CHIP
+    // backgroundColor: transparent — unselected chips show no fill.
+    //
+    // selectedColor: white — selected chip fills with white, label
+    // switches to black via secondaryLabelStyle. Mirrors the light
+    // theme logic but inverted — selected always fills with the
+    // primary colour (black in light, white in dark).
+    //
+    // side: greyDark border — matches idle input field borders
+    // in dark mode, keeping the visual language consistent.
     chipTheme: ChipThemeData(
       backgroundColor: Colors.transparent,
       selectedColor: InktomeColors.white,
@@ -467,9 +468,12 @@ ThemeData inktomeDarkTheme() {
       ),
     ),
 
+    // ? MARK: CARD
+    // color reads from darkColorScheme.surface — which is cardOnBlack.
+    // Same elevation and shape as light.
     cardTheme: CardThemeData(
-      color: colorScheme.surface,
-      elevation: 0, // flat design
+      color: darkColorScheme.surface,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(InktomeSpacing.radiusMd),
       ),
