@@ -26,7 +26,6 @@ import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
 
-
 // ? MARK: LIGHT THEME
 
 /// Light theme for Inktome.
@@ -99,7 +98,7 @@ ThemeData inktomeLightTheme() {
       scrolledUnderElevation: 0,
       centerTitle: false,
       // IMPORTANT: AppBar does NOT inherit from the TextTheme for its title. It reads this property directly. If this style has no colour, the title falls back to AppBar's internal DefaultTextStyle which is always white — regardless of theme. Always set an explicit colour here.
-      titleTextStyle: InktomeTextStyles.headingSmallWithColor(
+      titleTextStyle: InktomeTextStyles.headingLargeWithColor(
         InktomeColors.black,
       ),
       systemOverlayStyle: const SystemUiOverlayStyle(
@@ -333,7 +332,7 @@ ThemeData inktomeDarkTheme() {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      titleTextStyle: InktomeTextStyles.headingSmallWithColor(
+      titleTextStyle: InktomeTextStyles.headingLargeWithColor(
         InktomeColors.white,
       ),
       systemOverlayStyle: const SystemUiOverlayStyle(
