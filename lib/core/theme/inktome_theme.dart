@@ -85,6 +85,25 @@ ThemeData inktomeLightTheme() {
     // if they need the black background instead.
     scaffoldBackgroundColor: InktomeColors.white,
 
+    // Text theme using custom fonts with theme-aware colors
+    textTheme: TextTheme(
+      displayLarge: InktomeTextStyles.displayLarge,
+      displayMedium: InktomeTextStyles.display,
+      displaySmall: InktomeTextStyles.headingLarge,
+      headlineLarge: InktomeTextStyles.headingLarge,
+      headlineMedium: InktomeTextStyles.headingMedium,
+      headlineSmall: InktomeTextStyles.headingSmall,
+      titleLarge: InktomeTextStyles.headingSmall,
+      titleMedium: InktomeTextStyles.bodyLarge,
+      titleSmall: InktomeTextStyles.body,
+      bodyLarge: InktomeTextStyles.bodyLarge,
+      bodyMedium: InktomeTextStyles.body,
+      bodySmall: InktomeTextStyles.bodySmall,
+      labelLarge: InktomeTextStyles.labelLarge,
+      labelMedium: InktomeTextStyles.label,
+      labelSmall: InktomeTextStyles.labelSmall,
+    ),
+
     // ? APP BAR
     //
     // Transparent so it always matches whatever background the
@@ -254,33 +273,15 @@ ThemeData inktomeLightTheme() {
       ),
     ),
 
-    // ? CHIP
+    // ? CARD
     //
-    // Used for tags, reading status labels, genre chips.
-    // Transparent fill, 1pt outline — lighter than buttons
-    // so they read as labels rather than actions.
-    //
-    // Selected state gets a black fill to signal active filter.
-    //
-    // Usage:
-    //   Chip(label: Text('Fantasy'))
-    //   FilterChip(label: Text('Reading'), selected: true, onSelected: (_) {})
-    chipTheme: ChipThemeData(
-      backgroundColor: Colors.transparent,
-      selectedColor: InktomeColors.black,
-      labelStyle: InktomeTextStyles.labelLarge,
-      secondaryLabelStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.white, // label colour when chip is selected
-      ),
-      side: const BorderSide(color: InktomeColors.greyMid, width: 1.0),
-      padding: const EdgeInsets.symmetric(
-        horizontal: InktomeSpacing.sm,
-        vertical: InktomeSpacing.xs,
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(InktomeSpacing.radiusPill),
-        ),
+    // Cards sit on top of the scaffold background.
+    // Use for content containers, dialogs, sheets.
+    cardTheme: CardThemeData(
+      color: colorScheme.surface,
+      elevation: 0, // flat design
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(InktomeSpacing.radiusMd),
       ),
     ),
   );
@@ -322,6 +323,24 @@ ThemeData inktomeDarkTheme() {
     colorScheme: colorScheme,
 
     scaffoldBackgroundColor: InktomeColors.black,
+
+    textTheme: TextTheme(
+      displayLarge: InktomeTextStyles.displayLarge,
+      displayMedium: InktomeTextStyles.display,
+      displaySmall: InktomeTextStyles.headingLarge,
+      headlineLarge: InktomeTextStyles.headingLarge,
+      headlineMedium: InktomeTextStyles.headingMedium,
+      headlineSmall: InktomeTextStyles.headingSmall,
+      titleLarge: InktomeTextStyles.headingSmall,
+      titleMedium: InktomeTextStyles.bodyLarge,
+      titleSmall: InktomeTextStyles.body,
+      bodyLarge: InktomeTextStyles.bodyLarge,
+      bodyMedium: InktomeTextStyles.body,
+      bodySmall: InktomeTextStyles.bodySmall,
+      labelLarge: InktomeTextStyles.labelLarge,
+      labelMedium: InktomeTextStyles.label,
+      labelSmall: InktomeTextStyles.labelSmall,
+    ),
 
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -445,6 +464,14 @@ ThemeData inktomeDarkTheme() {
         borderRadius: BorderRadius.all(
           Radius.circular(InktomeSpacing.radiusPill),
         ),
+      ),
+    ),
+
+    cardTheme: CardThemeData(
+      color: colorScheme.surface,
+      elevation: 0, // flat design
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(InktomeSpacing.radiusMd),
       ),
     ),
   );

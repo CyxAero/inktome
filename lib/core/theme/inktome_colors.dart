@@ -49,6 +49,6 @@ class InktomeColors {
   static const Color richBlue = Color(0xFF191265);
 
   // ? ERROR
-  /// Not used in the current theme. Reserved for future use.
+  /// Error states and destructive actions. Use sparingly for maximum impact.
   static const Color brickEmber = Color(0xFFBA2D0B);
 }

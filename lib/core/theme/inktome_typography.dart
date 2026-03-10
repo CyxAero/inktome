@@ -29,7 +29,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: -1.5,
     height: 0.95,
-    color: InktomeColors.black,
   );
 
   /// 67.3sp - Large empty-state messages, prominent screen identifiers.
@@ -39,7 +38,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: -1.0,
     height: 1.0,
-    color: InktomeColors.black,
   );
 
   /// Large Display style with custom color
@@ -58,7 +56,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: -0.5,
     height: 1.05,
-    color: InktomeColors.black,
   );
 
   /// 36.0sp - Section titles
@@ -68,7 +65,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: -0.3,
     height: 1.15,
-    color: InktomeColors.black,
   );
 
   /// 28.0sp — Sub-section headers
@@ -78,7 +74,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w300,
     letterSpacing: -0.2,
     height: 1.2,
-    color: InktomeColors.black,
   );
 
   /// Heading styles with custom colors
@@ -97,7 +92,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.0,
     height: 1.5,
-    color: InktomeColors.black,
   );
 
   /// 18.0sp — Standard body text.
@@ -107,7 +101,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w100,
     letterSpacing: 0.1,
     height: 1.65,
-    color: InktomeColors.black,
   );
 
   /// 15.0sp — Secondary copy, supporting text, smaller descriptions.
@@ -117,7 +110,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w100,
     letterSpacing: 0.1,
     height: 1.55,
-    color: InktomeColors.black,
   );
 
   /// Body styles with custom colors
@@ -126,7 +118,6 @@ class InktomeTextStyles {
   static TextStyle bodyWithColor(Color color) => _body.copyWith(color: color);
   static TextStyle bodySmallWithColor(Color color) =>
       _bodySmall.copyWith(color: color);
-
 
   // ? LABEL FONTS
   /// 13.0sp — Tags, chips, UI labels.
@@ -137,7 +128,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
     height: 1.4,
-    color: InktomeColors.greyMuted,
   );
 
   /// 11.0sp — Captions, timestamps, nav labels, metadata.
@@ -147,7 +137,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
     height: 1.4,
-    color: InktomeColors.greyMuted,
   );
 
   /// 9.0sp — Fine print, de-emphasised hints.
@@ -158,7 +147,6 @@ class InktomeTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.3,
     height: 1.4,
-    color: InktomeColors.greyMuted,
   );
 
   /// Label styles with custom colors
@@ -167,7 +155,6 @@ class InktomeTextStyles {
   static TextStyle labelWithColor(Color color) => _label.copyWith(color: color);
   static TextStyle labelSmallWithColor(Color color) =>
       _labelSmall.copyWith(color: color);
-
 
   // ? BUTTON STYLE
   /// 15.0sp — All button types (filled, outlined, text).
