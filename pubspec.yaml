@@ -8,8 +8,10 @@ environment:
 
 dependencies:
   cached_network_image: ^3.4.1
+  dashed_border: ^1.0.2
   flutter:
     sdk: flutter
+  flutter_lucide_animated: ^0.0.4
   go_router: ^17.1.0
   google_fonts: ^8.0.2
   provider: ^6.1.5+1

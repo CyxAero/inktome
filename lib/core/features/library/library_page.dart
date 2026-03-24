@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:inktome/core/widgets/app_background.dart';
 
-class LibraryPage extends StatelessWidget {
+/// INKTOME LIBRARY PAGE
+///
+/// The user's full book collection, switchable between three modes:
+///   Status      — grouped by reading status (Reading, Finished, etc.)
+///   Collections — user-defined shelves, series, genres
+///   All         — flat alphabetical grid with search
+///
+/// The mode switcher lives in the screen title (Queue app style dropdown).
+class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
   @override
+  State<LibraryPage> createState() => _LibraryPageState();
+}
+
+class _LibraryPageState extends State<LibraryPage> {
+  @override
   Widget build(BuildContext context) {
-    // Always read from the theme — never call InktomeTextStyles
-    // directly in build methods. The theme carries the correct
-    // colour for the current light/dark mode automatically.
     final textTheme = Theme.of(context).textTheme;
 
-    return AppBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          // No style override needed — titleTextStyle in AppBarTheme
-          // already carries the correct colour for each mode.
-          title: const Text('Inktome'),
-        ),
-        body: Center(
-          child: Text('Library Page', style: textTheme.displayLarge),
-        ),
-      ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: const Text('library')),
+      body: Center(child: Text('Library Page', style: textTheme.displayMedium)),
     );
   }
 }

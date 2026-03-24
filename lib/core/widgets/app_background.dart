@@ -70,12 +70,13 @@ class AppBackground extends StatelessWidget {
     // Below 0.5 is considered dark — use white dots.
     final isDark = bgColor.computeLuminance() < 0.5;
     final dotColor = isDark ? InktomeColors.white : InktomeColors.black;
+    final effectiveDotOpacity = isDark ? 0.18 : dotOpacity;
 
     return Container(
       color: bgColor,
       child: Stack(
         children: [
-          // ── Dot grid ──────────────────────────────────────────
+          // ? MARK: PAINTING DOT GRID
           // RepaintBoundary tells Flutter to rasterise this layer
           // to a GPU texture after the first frame. Since the dots
           // never move or change, Flutter never repaints this —
@@ -88,13 +89,13 @@ class AppBackground extends StatelessWidget {
                   dotColor: dotColor,
                   dotRadius: dotRadius,
                   dotSpacing: dotSpacing,
-                  dotOpacity: dotOpacity,
+                  dotOpacity: effectiveDotOpacity,
                 ),
               ),
             ),
           ),
 
-          // ── Vignette ──────────────────────────────────────────
+          // ? MARK: PAINTING VIGNETTE
           // Fades the dots towards all four edges evenly.
           //
           // Why a CustomPainter and not DecoratedBox + RadialGradient?
@@ -129,7 +130,7 @@ class AppBackground extends StatelessWidget {
   }
 }
 
-// ── Dot grid painter ──────────────────────────────────────────
+// ? MARK: DOT GRID PAINTER
 //
 // Walks the canvas in a regular grid, painting a filled circle
 // at each intersection. Simple and fast — no trigonometry,
@@ -181,7 +182,7 @@ class _DotGridPainter extends CustomPainter {
   }
 }
 
-// ── Vignette painter ──────────────────────────────────────────
+// ? MARK: VIGNETTE PAINTER
 //
 // HOW THE OVAL STRETCHING WORKS:
 //
