@@ -90,19 +90,44 @@ class InktomeNavBar extends StatelessWidget {
                   builder: (context, notifier, _) {
                     // Fade + slight rightward slide in/out.
                     return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
+                      duration: const Duration(milliseconds: 300),
                       switchInCurve: Curves.easeOutBack,
                       switchOutCurve: Curves.easeIn,
-                      transitionBuilder: (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0.15, 0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        ),
-                      ),
+                      transitionBuilder: (child, animation) {
+                        // 1. Define the Slide: -0.15 moves it from right-to-left (inward)
+                        final slideIn = Tween<Offset>(
+                          begin: const Offset(
+                            -0.25,
+                            0,
+                          ), // Start slightly to the right, slide left
+                          end: Offset.zero,
+                        ).animate(animation);
+
+                        // 2. Define the Rotation: -0.25 is -90 degrees (adjust to taste)
+                        final rotateIn = Tween<double>(
+                          begin: -0.2, // Start tilted
+                          end: 0, // End upright
+                        ).animate(animation);
+
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: slideIn,
+                            child: RotationTransition(
+                              turns: rotateIn,
+                              child: child,
+                            ),
+                          ),
+                          // opacity: animation,
+                          // child: SlideTransition(
+                          //   position: Tween<Offset>(
+                          //     begin: const Offset(0.15, 0),
+                          //     end: Offset.zero,
+                          //   ).animate(animation),
+                          //   child: child,
+                          // ),
+                        );
+                      },
                       child: notifier.hasAction
                           ? _ActionPill(
                               // Key tells AnimatedSwitcher to re-animate
@@ -191,19 +216,6 @@ class _MainPill extends StatelessWidget {
               selectedPillFg: selectedPillFg,
               onTap: onTabSelected,
             ),
-            // child: Row(
-            //   children: [
-            //     for (int i = 0; i < tabs.length; i++)
-            //       _NavTabItem(
-            //         label: tabs[i].label,
-            //         isSelected: i == selectedIndex,
-            //         pillFg: pillFg,
-            //         selectedPillBg: selectedPillBg,
-            //         selectedPillFg: selectedPillFg,
-            //         onTap: () => onTabSelected(i),
-            //       ),
-            //   ],
-            // ),
           ),
         ),
       ),
