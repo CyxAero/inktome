@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:inktome/navigation/nav_bar_notifier.dart';
+import 'package:provider/provider.dart';
 
 /// INKTOME SETTINGS PAGE
 ///
@@ -24,5 +26,14 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Text('Settings Page', style: textTheme.displayMedium),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<NavBarNotifier>().clearAction();
+    });
   }
 }

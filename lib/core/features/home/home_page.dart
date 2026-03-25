@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:inktome/navigation/nav_bar_notifier.dart';
+import 'package:provider/provider.dart';
 
 /// INKTOME HOME PAGE
 ///
@@ -22,5 +25,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('inktome')),
       body: Center(child: Text('Home Page', style: textTheme.displayMedium)),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<NavBarNotifier>().setAction(
+        NavAction(icon: plus, onTap: () => {}),
+      );
+    });
   }
 }
