@@ -1,9 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
+import 'package:inktome/navigation/nav_bar_notifier.dart';
+import 'package:provider/provider.dart';
 
 /// A single tab in the main navigation pill (Pill 1).
 class NavTab {
@@ -61,13 +64,14 @@ class InktomeNavBar extends StatelessWidget {
           // IntrinsicHeight makes both pills measure their natural height,
           // then stretches both to match the taller one (always Pill 1).
           // This is what gives Pill 2 a perfect circle shape
-          child: IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // MARK: Pill 1 — main nav
-                _MainPill(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // MARK: Pill 1 — main nav
+              SizedBox(
+                height: InktomeSpacing.navBarPillHeight,
+                child: _MainPill(
                   tabs: tabs,
                   selectedIndex: selectedIndex,
                   onTabSelected: onTabSelected,
@@ -75,8 +79,45 @@ class InktomeNavBar extends StatelessWidget {
                   pillFg: pillFg,
                   isDark: isDark,
                 ),
-              ],
-            ),
+              ),
+
+              // MARK: Pill 2 — contextual action
+              // Consumer rebuilds only this part of the tree when the
+              // notifier fires, leaving Pill 1 completely untouched.
+              SizedBox(
+                height: InktomeSpacing.navBarPillHeight,
+                child: Consumer<NavBarNotifier>(
+                  builder: (context, notifier, _) {
+                    // Fade + slight rightward slide in/out.
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      switchInCurve: Curves.easeOutBack,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0.15, 0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      ),
+                      child: notifier.hasAction
+                          ? _ActionPill(
+                              // Key tells AnimatedSwitcher to re-animate
+                              // when the icon changes (e.g. switching tabs).
+                              key: ValueKey(notifier.action!.icon),
+                              action: notifier.action!,
+                              pillBg: pillBg,
+                              pillFg: pillFg,
+                            )
+                          : const SizedBox.shrink(key: ValueKey('empty')),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -142,24 +183,163 @@ class _MainPill extends StatelessWidget {
           color: pillBg,
           child: Padding(
             padding: const EdgeInsets.all(InktomeSpacing.sm),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (int i = 0; i < tabs.length; i++)
-                  _NavTabItem(
-                    label: tabs[i].label,
-                    isSelected: i == selectedIndex,
-                    pillFg: pillFg,
-                    selectedPillBg: selectedPillBg,
-                    selectedPillFg: selectedPillFg,
-                    onTap: () => onTabSelected(i),
-                  ),
-              ],
+            child: _SlidingTabRow(
+              tabs: tabs,
+              selectedIndex: selectedIndex,
+              pillFg: pillFg,
+              selectedPillBg: selectedPillBg,
+              selectedPillFg: selectedPillFg,
+              onTap: onTabSelected,
             ),
+            // child: Row(
+            //   children: [
+            //     for (int i = 0; i < tabs.length; i++)
+            //       _NavTabItem(
+            //         label: tabs[i].label,
+            //         isSelected: i == selectedIndex,
+            //         pillFg: pillFg,
+            //         selectedPillBg: selectedPillBg,
+            //         selectedPillFg: selectedPillFg,
+            //         onTap: () => onTabSelected(i),
+            //       ),
+            //   ],
+            // ),
           ),
         ),
       ),
+    );
+  }
+}
+
+// MARK: SLIDING TAB ROW
+class _SlidingTabRow extends StatefulWidget {
+  const _SlidingTabRow({
+    required this.tabs,
+    required this.selectedIndex,
+    required this.pillFg,
+    required this.selectedPillBg,
+    required this.selectedPillFg,
+    required this.onTap,
+  });
+
+  final List<NavTab> tabs;
+  final int selectedIndex;
+  final Color pillFg;
+  final Color selectedPillBg;
+  final Color selectedPillFg;
+  final ValueChanged<int> onTap;
+
+  @override
+  State<_SlidingTabRow> createState() => _SlidingTabRowState();
+}
+
+class _SlidingTabRowState extends State<_SlidingTabRow> {
+  // One GlobalKey per tab so we can measure each tab's RenderBox.
+  late List<GlobalKey> _keys;
+
+  // The indicator's current position and size — animated.
+  double _indicatorLeft = 0;
+  double _indicatorWidth = 0;
+  double _indicatorHeight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _keys = List.generate(widget.tabs.length, (_) => GlobalKey());
+    // Measure after first frame so RenderBoxes exist.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
+  }
+
+  @override
+  void didUpdateWidget(_SlidingTabRow old) {
+    super.didUpdateWidget(old);
+    // Re-measure whenever the selected tab changes.
+    if (old.selectedIndex != widget.selectedIndex) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
+    }
+  }
+
+  void _updateIndicator() {
+    final key = _keys[widget.selectedIndex];
+    final box = key.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) return;
+
+    // Position relative to this widget's own RenderBox.
+    final parentBox = context.findRenderObject() as RenderBox?;
+    if (parentBox == null) return;
+
+    final offset = box.localToGlobal(Offset.zero, ancestor: parentBox);
+
+    setState(() {
+      _indicatorLeft = offset.dx;
+      _indicatorWidth = box.size.width;
+      _indicatorHeight = box.size.height;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Invisible row — sets the Stack's natural size and
+        // gives us RenderBoxes to measure via GlobalKeys.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (int i = 0; i < widget.tabs.length; i++)
+              _NavTabItem(
+                key: _keys[i],
+                label: widget.tabs[i].label,
+                isSelected: i == widget.selectedIndex,
+                pillFg: widget.pillFg,
+                selectedPillBg:
+                    Colors.transparent, // indicator drawn separately
+                selectedPillFg: widget.selectedPillFg,
+                onTap: () => widget.onTap(i),
+              ),
+          ],
+        ),
+
+        // Sliding indicator — animates position and size.
+        if (_indicatorWidth > 0)
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutBack, // springy
+            left: _indicatorLeft,
+            top: 0,
+            width: _indicatorWidth,
+            height: _indicatorHeight,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: ShapeDecoration(
+                  color: widget.selectedPillBg,
+                  shape: RoundedSuperellipseBorder(
+                    borderRadius: BorderRadius.circular(_kInnerTabRadius),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+        // Visible text row on top — selected tab text uses selectedPillFg.
+        // Rendered again so text sits above the indicator.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (int i = 0; i < widget.tabs.length; i++)
+              _NavTabItem(
+                label: widget.tabs[i].label,
+                isSelected: i == widget.selectedIndex,
+                pillFg: widget.pillFg,
+                selectedPillBg:
+                    Colors.transparent, // indicator handles background
+                selectedPillFg: widget.selectedPillFg,
+                onTap: () => widget.onTap(i),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -168,6 +348,7 @@ class _MainPill extends StatelessWidget {
 /// A single tappable label chip inside Pill 1.
 class _NavTabItem extends StatelessWidget {
   const _NavTabItem({
+    super.key,
     required this.label,
     required this.isSelected,
     required this.pillFg,
@@ -206,6 +387,55 @@ class _NavTabItem extends StatelessWidget {
             color: isSelected ? selectedPillFg : pillFg,
             fontWeight: isSelected ? FontWeight.w900 : FontWeight.w400,
             fontSize: 18,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// MARK: ACTION PILL (Pill 2)
+/// The right pill — shows the current screen's contextual action.
+///
+/// Stretches to match Pill 1's height via [IntrinsicHeight] in the parent,
+/// and since it holds a single square icon it naturally becomes a circle.
+/// Uses the same dashed squircle border as Pill 1 for visual consistency.
+class _ActionPill extends StatelessWidget {
+  const _ActionPill({
+    super.key,
+    required this.action,
+    required this.pillBg,
+    required this.pillFg,
+  });
+
+  final NavAction action;
+  final Color pillBg;
+  final Color pillFg;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: action.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: CustomPaint(
+        foregroundPainter: _DashedBorderPainter(
+          color: pillFg,
+          // radius: 999 clamps to half the shortest side at paint time,
+          // producing a perfect circle on this square widget.
+          radius: 999,
+        ),
+        child: ClipRSuperellipse(
+          borderRadius: BorderRadius.circular(999),
+          child: ColoredBox(
+            color: pillBg,
+            child: Padding(
+              padding: const EdgeInsets.all(InktomeSpacing.md),
+              child: LucideAnimatedIcon(
+                icon: action.icon,
+                color: pillFg,
+                size: 28,
+              ),
+            ),
           ),
         ),
       ),
