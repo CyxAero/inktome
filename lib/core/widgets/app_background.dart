@@ -72,7 +72,7 @@ class AppBackground extends StatelessWidget {
     final dotColor = isDark ? InktomeColors.white : InktomeColors.black;
     final effectiveDotOpacity = isDark ? 0.18 : dotOpacity;
 
-    return Container(
+    return ColoredBox(
       color: bgColor,
       child: Stack(
         children: [

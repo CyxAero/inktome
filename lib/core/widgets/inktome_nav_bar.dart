@@ -1,10 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
+import 'package:inktome/core/widgets/custom_dashed_border.dart';
 import 'package:inktome/navigation/nav_bar_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +44,7 @@ class InktomeNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
+    // final scaffoldColor = Theme.of(context).colorScheme.surface;
     final isDark = scaffoldColor.computeLuminance() < 0.5;
     final pillBg = isDark
         ? InktomeColors.cardOnBlack
@@ -69,15 +69,17 @@ class InktomeNavBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // MARK: Pill 1 — main nav
-              SizedBox(
-                height: InktomeSpacing.navBarPillHeight,
-                child: _MainPill(
-                  tabs: tabs,
-                  selectedIndex: selectedIndex,
-                  onTabSelected: onTabSelected,
-                  pillBg: pillBg,
-                  pillFg: pillFg,
-                  isDark: isDark,
+              Flexible(
+                child: SizedBox(
+                  height: InktomeSpacing.navBarPillHeight,
+                  child: _MainPill(
+                    tabs: tabs,
+                    selectedIndex: selectedIndex,
+                    onTabSelected: onTabSelected,
+                    pillBg: pillBg,
+                    pillFg: pillFg,
+                    isDark: isDark,
+                  ),
                 ),
               ),
 
@@ -118,14 +120,6 @@ class InktomeNavBar extends StatelessWidget {
                               child: child,
                             ),
                           ),
-                          // opacity: animation,
-                          // child: SlideTransition(
-                          //   position: Tween<Offset>(
-                          //     begin: const Offset(0.15, 0),
-                          //     end: Offset.zero,
-                          //   ).animate(animation),
-                          //   child: child,
-                          // ),
                         );
                       },
                       child: notifier.hasAction
@@ -150,23 +144,8 @@ class InktomeNavBar extends StatelessWidget {
   }
 }
 
-// MARK: SHARED CONSTANTS
-
-/// Squircle corner radius for the outer pill shape and dashed border.
-const double _kPillRadius = 16.0;
-
-/// Corner radius for the inner selected-tab highlight chip.
-/// Smaller than [_kPillRadius] so it sits visually inset.
-const double _kInnerTabRadius = 10.0;
-
 // MARK: MAIN NAV PILL (Pill 1)
 /// The left pill containing the tab labels.
-///
-/// Layout (outer → inner):
-///   CustomPaint (dashed squircle border, drawn in foreground)
-///     └── ClipRSuperellipse (clips fill to squircle outline)
-///           └── ColoredBox (pill background)
-///                 └── Padding > Row of [_NavTabItem]
 ///
 /// [IntrinsicHeight] lives in the parent [InktomeNavBar], not here —
 /// that's what lets Pill 2 stretch to match this pill's height.
@@ -197,13 +176,11 @@ class _MainPill extends StatelessWidget {
         ? InktomeColors.black
         : InktomeColors.white;
 
-    return CustomPaint(
-      foregroundPainter: _DashedBorderPainter(
-        color: pillFg,
-        radius: _kPillRadius,
-      ),
-      child: ClipRSuperellipse(
-        borderRadius: BorderRadius.circular(_kPillRadius),
+    return DashedBorder(
+      color: pillFg,
+      radius: InktomeSpacing.radiusLg,
+      child: SquircleClip(
+        radius: InktomeSpacing.radiusLg,
         child: ColoredBox(
           color: pillBg,
           child: Padding(
@@ -245,6 +222,7 @@ class _SlidingTabRow extends StatefulWidget {
   State<_SlidingTabRow> createState() => _SlidingTabRowState();
 }
 
+// MARK: SLIDING TAB ROW STATE
 class _SlidingTabRowState extends State<_SlidingTabRow> {
   // One GlobalKey per tab so we can measure each tab's RenderBox.
   late List<GlobalKey> _keys;
@@ -260,6 +238,14 @@ class _SlidingTabRowState extends State<_SlidingTabRow> {
     _keys = List.generate(widget.tabs.length, (_) => GlobalKey());
     // Measure after first frame so RenderBoxes exist.
     WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateIndicator();
+      // Re-measure after fonts settle on first launch.
+      Future.delayed(const Duration(milliseconds: 350), () {
+        if (mounted) _updateIndicator();
+      });
+    });
   }
 
   @override
@@ -313,7 +299,7 @@ class _SlidingTabRowState extends State<_SlidingTabRow> {
           ],
         ),
 
-        // Sliding indicator — animates position and size.
+        // MARK: Sliding indicator — animates position and size.
         if (_indicatorWidth > 0)
           AnimatedPositioned(
             duration: const Duration(milliseconds: 350),
@@ -327,7 +313,7 @@ class _SlidingTabRowState extends State<_SlidingTabRow> {
                 decoration: ShapeDecoration(
                   color: widget.selectedPillBg,
                   shape: RoundedSuperellipseBorder(
-                    borderRadius: BorderRadius.circular(_kInnerTabRadius),
+                    borderRadius: BorderRadius.circular(InktomeSpacing.sm + 2),
                   ),
                 ),
               ),
@@ -386,18 +372,18 @@ class _NavTabItem extends StatelessWidget {
         decoration: ShapeDecoration(
           color: isSelected ? selectedPillBg : Colors.transparent,
           shape: RoundedSuperellipseBorder(
-            borderRadius: BorderRadius.circular(_kInnerTabRadius),
+            borderRadius: BorderRadius.circular(InktomeSpacing.sm + 2),
           ),
         ),
         padding: const EdgeInsets.symmetric(
-          horizontal: InktomeSpacing.sm,
+          horizontal: InktomeSpacing.xs,
           vertical: InktomeSpacing.sm,
         ),
         child: Text(
           label,
           style: InktomeTextStyles.button.copyWith(
             color: isSelected ? selectedPillFg : pillFg,
-            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w400,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w300,
             fontSize: 18,
           ),
         ),
@@ -429,15 +415,11 @@ class _ActionPill extends StatelessWidget {
     return GestureDetector(
       onTap: action.onTap,
       behavior: HitTestBehavior.opaque,
-      child: CustomPaint(
-        foregroundPainter: _DashedBorderPainter(
-          color: pillFg,
-          // radius: 999 clamps to half the shortest side at paint time,
-          // producing a perfect circle on this square widget.
-          radius: 999,
-        ),
-        child: ClipRSuperellipse(
-          borderRadius: BorderRadius.circular(999),
+      child: DashedBorder(
+        color: pillFg,
+        radius: InktomeSpacing.radiusPill, // large → will become a circle
+        child: SquircleClip(
+          radius: InktomeSpacing.radiusPill,
           child: ColoredBox(
             color: pillBg,
             child: Padding(
@@ -446,6 +428,7 @@ class _ActionPill extends StatelessWidget {
                 icon: action.icon,
                 color: pillFg,
                 size: 28,
+                onTap: action.onTap,
               ),
             ),
           ),
@@ -453,65 +436,4 @@ class _ActionPill extends StatelessWidget {
       ),
     );
   }
-}
-
-// MARK: DASHED BORDER PAINTER
-/// Draws a dashed border following an RSuperellipse (squircle) outline.
-///
-/// Passing [radius: 999] (or any value > half the shortest side) produces
-/// a perfect circle on a square widget — the clamp handles it automatically.
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({required this.color, required this.radius});
-
-  final Color color;
-  final double radius;
-  final double strokeWidth = 1.5;
-  final double dashLength = 8.0;
-  final double dashGap = 5.0;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final inset = strokeWidth / 2;
-    final rect = Rect.fromLTWH(
-      inset,
-      inset,
-      size.width - inset * 2,
-      size.height - inset * 2,
-    );
-
-    // Clamp radius to half the shortest side.
-    // This is what turns radius:999 into a perfect circle on a square widget.
-    final clampedRadius = math.min(
-      radius,
-      math.min(rect.width, rect.height) / 2,
-    );
-
-    final path = Path()
-      ..addRSuperellipse(
-        RSuperellipse.fromRectAndRadius(rect, Radius.circular(clampedRadius)),
-      );
-
-    for (final metric in path.computeMetrics()) {
-      double distance = 0;
-      while (distance < metric.length) {
-        final end = math.min(distance + dashLength, metric.length);
-        canvas.drawPath(metric.extractPath(distance, end), paint);
-        distance += dashLength + dashGap;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorderPainter old) =>
-      old.color != color ||
-      old.radius != radius ||
-      old.strokeWidth != strokeWidth ||
-      old.dashLength != dashLength ||
-      old.dashGap != dashGap;
 }
