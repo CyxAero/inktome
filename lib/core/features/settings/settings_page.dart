@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:inktome/core/features/settings/sections/appearance_section.dart';
+import 'package:inktome/core/theme/inktome_colors.dart';
+import 'package:inktome/core/theme/inktome_spacing.dart';
+import 'package:inktome/core/theme/theme_notifier.dart';
+import 'package:inktome/core/widgets/custom_dashed_border.dart';
+import 'package:inktome/core/widgets/inktome_card.dart';
 import 'package:inktome/navigation/nav_bar_notifier.dart';
 import 'package:provider/provider.dart';
 
-/// INKTOME SETTINGS PAGE
-///
-/// App preferences — backup, export, display options, about.
-///
-/// Contextual pill: none — settings has no primary action.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -16,24 +17,56 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('settings')),
-      body: Center(
-        child: Text('Settings Page', style: textTheme.displayMedium),
-      ),
-    );
-  }
-
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<NavBarNotifier>().clearAction();
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? InktomeColors.white : InktomeColors.black;
+    final currentMode = context.watch<ThemeNotifier>().mode;
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(title: const Text('settings')),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: InktomeSpacing.pagePadding,
+        ),
+        child: IntrinsicHeight(
+          child: InktomeCard(
+            borderColor: textColor,
+            cardColor: isDark
+                ? InktomeColors.cardOnBlack
+                : InktomeColors.cardOnWhite,
+            cardBorderRadius: InktomeSpacing.radiusXl,
+            child: Padding(
+              padding: const EdgeInsets.all(InktomeSpacing.xs - 2),
+              child: DashedBorder(
+                color: textColor,
+                radius: 20.0,
+                // radius: InktomeSpacing.radiusMd,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: InktomeSpacing.sm,
+                    vertical: InktomeSpacing.md,
+                  ),
+                  child: AppearanceSection(
+                    textColor: textColor,
+                    currentMode: currentMode,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

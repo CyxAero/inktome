@@ -70,7 +70,7 @@ class AppBackground extends StatelessWidget {
     // Below 0.5 is considered dark — use white dots.
     final isDark = bgColor.computeLuminance() < 0.5;
     final dotColor = isDark ? InktomeColors.white : InktomeColors.black;
-    final effectiveDotOpacity = isDark ? 0.18 : dotOpacity;
+    final effectiveDotOpacity = isDark ? 0.08 : dotOpacity;
 
     return ColoredBox(
       color: bgColor,
