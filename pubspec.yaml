@@ -1,5 +1,7 @@
 name: inktome
-description: "A privacy-first, offline book tracking app. Catalogue your personal library via barcode scan, search, or manual entry — no account required, no cloud, your data stays on your device."
+description: "A privacy-first, offline book tracking app. Catalogue your
+  personal library via barcode scan, search, or manual entry — no account
+  required, no cloud, your data stays on your device."
 publish_to: "none"
 version: 0.1.0+1
 
@@ -26,6 +28,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  http: ^1.6.0
 
 flutter:
   uses-material-design: true
