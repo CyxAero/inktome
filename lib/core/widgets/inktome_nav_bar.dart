@@ -46,9 +46,7 @@ class InktomeNavBar extends StatelessWidget {
     final scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
     // final scaffoldColor = Theme.of(context).colorScheme.surface;
     final isDark = scaffoldColor.computeLuminance() < 0.5;
-    final pillBg = isDark
-        ? InktomeColors.cardOnBlack
-        : InktomeColors.cardOnWhite;
+    final pillBg = isDark ? InktomeColors.black : InktomeColors.white;
     final pillFg = isDark ? InktomeColors.white : InktomeColors.black;
 
     return Material(

@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
-import 'package:inktome/features/add_book/search_field.dart';
+import 'package:inktome/core/widgets/search_field.dart';
 import 'package:inktome/navigation/nav_bar_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -159,9 +160,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
     final labelColor = isDark
         ? InktomeColors.greyOnDark
         : InktomeColors.greyMuted;
-    final inputBg = isDark
-        ? InktomeColors.cardOnBlack
-        : InktomeColors.cardOnWhite;
+    final inputBg = isDark ? InktomeColors.black : InktomeColors.white;
     final inputSubmitBg = isDark ? InktomeColors.white : InktomeColors.black;
     final inputSubmitTextColor = isDark
         ? InktomeColors.black
@@ -255,19 +254,52 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
                 bottom: searchBottomOffset,
                 child: GestureDetector(
                   onTap: () {}, // Prevent field taps reaching dismiss.
-                  child: SearchField(
+                  child: AnimatedBuilder(
                     animation: CurvedAnimation(
                       parent: _searchController,
                       curve: Curves.easeOutBack,
                     ),
-                    focusNode: _searchFocusNode,
-                    controller: _searchTextController,
-                    inputBg: inputBg,
-                    textColor: textColor,
-                    labelColor: labelColor,
-                    inputSubmitBg: inputSubmitBg,
-                    inputSubmitTextColor: inputSubmitTextColor,
-                    onSubmit: _onSearchSubmitted,
+                    builder: (context, child) => Opacity(
+                      opacity: _searchController.value.clamp(0.0, 1.0),
+                      child: Transform.translate(
+                        offset: Offset(0, 20 * (1 - _searchController.value)),
+                        child: child,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: InktomeSpacing.xs,
+                          ),
+                          child: GestureDetector(
+                            onTap: _searchFocusNode.requestFocus,
+                            child: Text(
+                              'SEARCH ONLINE FOR MY BOOK',
+                              style:
+                                  InktomeTextStyles.buttonWithColor(
+                                    textColor,
+                                  ).copyWith(
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                          ),
+                        ),
+                        SearchField(
+                          focusNode: _searchFocusNode,
+                          controller: _searchTextController,
+                          inputBg: inputBg,
+                          textColor: textColor,
+                          labelColor: labelColor,
+                          inputSubmitBg: inputSubmitBg,
+                          inputSubmitTextColor: inputSubmitTextColor,
+                          onSubmit: _onSearchSubmitted,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -298,10 +330,13 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
     }
   }
 
-  // MARK: onIsbnSubmitted
+  // MARK: onSearchSubmitted
   void _onSearchSubmitted(String query) {
-    // TODO: push online-search pre-filled with ISBN.
-    debugPrint('AddBook: Search submitted $query');
+    final q = query.trim();
+    if (q.isEmpty) return;
+    // Push search on top of the overlay — overlay stays mounted underneath.
+    // The query is URI-encoded so spaces and special chars survive the route.
+    context.push('/search?q=${Uri.encodeComponent(q)}');
   }
 }
 
