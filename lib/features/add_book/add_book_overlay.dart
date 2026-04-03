@@ -2,16 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
-import 'package:go_router/go_router.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
-import 'package:inktome/core/widgets/custom_dashed_border.dart';
+import 'package:inktome/features/add_book/search_field.dart';
 import 'package:inktome/navigation/nav_bar_notifier.dart';
 import 'package:provider/provider.dart';
 
 // MARK: PUBLIC API
-
 void showAddBookOverlay(BuildContext context) {
   context.read<NavBarNotifier>().showOverlay(
     closeAction: () => _overlayContentKey.currentState?.dismiss(),
@@ -47,28 +45,27 @@ class AddBookOverlayContent extends StatefulWidget {
 class AddBookOverlayContentState extends State<AddBookOverlayContent>
     with TickerProviderStateMixin {
   // MARK: CONTROLLERS
-
   late final AnimationController _bgController; // blur + dim
   late final AnimationController _itemsController; // stagger-in for options
   late final AnimationController
-  _isbnController; // ISBN field slide-up on enter
+  _searchController; // Search field slide-up on enter
 
   late final Animation<double> _dimOpacity;
   late final Animation<double> _blurSigma;
 
   bool _dismissing = false;
 
-  final _isbnFocusNode = FocusNode();
-  final _isbnTextController = TextEditingController();
+  final _searchFocusNode = FocusNode();
+  final _searchTextController = TextEditingController();
 
+  // MARK: STAGGER OPTIONS
   static const _options = [
-    _OverlayOption(label: 'online search', icon: search),
+    // _OverlayOption(label: 'online search', icon: search),
     _OverlayOption(label: 'barcode scan', icon: scan_text),
     _OverlayOption(label: 'manual input', icon: file_pen_line),
   ];
 
   // MARK: LIFECYCLE
-
   @override
   void initState() {
     super.initState();
@@ -81,7 +78,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _isbnController = AnimationController(
+    _searchController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
@@ -101,7 +98,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
       if (mounted) _itemsController.forward();
     });
     Future.delayed(const Duration(milliseconds: 200), () {
-      if (mounted) _isbnController.forward();
+      if (mounted) _searchController.forward();
     });
   }
 
@@ -109,22 +106,21 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
   void dispose() {
     _bgController.dispose();
     _itemsController.dispose();
-    _isbnController.dispose();
-    _isbnFocusNode.dispose();
-    _isbnTextController.dispose();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _searchTextController.dispose();
     super.dispose();
   }
 
   // MARK: DISMISS
-
   void dismiss() {
     if (_dismissing) return;
     setState(() => _dismissing = true);
 
     // Close keyboard silently before reversing — no listener to worry about
     // since we're not using a focus listener anywhere in this file.
-    _isbnFocusNode.unfocus();
-    _isbnController.reverse();
+    _searchFocusNode.unfocus();
+    _searchController.reverse();
     _itemsController.reverse();
 
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -137,7 +133,6 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
   }
 
   // MARK: STAGGER HELPER
-
   Animation<double> _itemAnimation(int index) {
     const staggerMs = 90;
     const itemDurationMs = 300;
@@ -181,7 +176,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final keyboardOpen = keyboardHeight > 50;
 
-    final isbnBottomOffset = keyboardOpen
+    final searchBottomOffset = keyboardOpen
         ? keyboardHeight + InktomeSpacing.md
         : InktomeSpacing.navBarPillHeight + InktomeSpacing.lg * 2;
 
@@ -191,7 +186,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
         behavior: HitTestBehavior.opaque,
         // Two-step dismiss: first tap closes the keyboard if it's open,
         // second tap (or back gesture) closes the overlay.
-        onTap: keyboardOpen ? _isbnFocusNode.unfocus : dismiss,
+        onTap: keyboardOpen ? _searchFocusNode.unfocus : dismiss,
         child: AnimatedBuilder(
           animation: _bgController,
           builder: (context, child) {
@@ -212,12 +207,12 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
           child: Stack(
             children: [
               // MARK: OPTIONS
-              // Fixed position — 42% down the screen on any device.
+              // Fixed position — 52% down the screen on any device.
               // AnimatedOpacity driven directly by keyboardOpen, so the fade
               // is always in sync with the keyboard's physical position.
               // No controller, no listener, no setState needed here.
               Positioned(
-                top: size.height * 0.42,
+                top: size.height * 0.52,
                 left: InktomeSpacing.pagePadding,
                 right: InktomeSpacing.pagePadding,
                 child: AnimatedOpacity(
@@ -257,22 +252,22 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
                 curve: Curves.easeOut,
                 left: InktomeSpacing.pagePadding,
                 right: InktomeSpacing.pagePadding,
-                bottom: isbnBottomOffset,
+                bottom: searchBottomOffset,
                 child: GestureDetector(
                   onTap: () {}, // Prevent field taps reaching dismiss.
-                  child: _IsbnField(
+                  child: SearchField(
                     animation: CurvedAnimation(
-                      parent: _isbnController,
+                      parent: _searchController,
                       curve: Curves.easeOutBack,
                     ),
-                    focusNode: _isbnFocusNode,
-                    controller: _isbnTextController,
+                    focusNode: _searchFocusNode,
+                    controller: _searchTextController,
                     inputBg: inputBg,
                     textColor: textColor,
                     labelColor: labelColor,
                     inputSubmitBg: inputSubmitBg,
                     inputSubmitTextColor: inputSubmitTextColor,
-                    onSubmit: _onIsbnSubmitted,
+                    onSubmit: _onSearchSubmitted,
                   ),
                 ),
               ),
@@ -292,8 +287,8 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
     // The overlay only dismisses once a book is actually saved, or
     // when the user explicitly closes it with ×.
     switch (label) {
-      case 'online search':
-        context.push('/search');
+      // case 'online search':
+      //   context.push('/search');
       case 'barcode scan':
         // TODO: launch barcode scanner, then push('/search?q=ISBN').
         break;
@@ -304,14 +299,13 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
   }
 
   // MARK: onIsbnSubmitted
-  void _onIsbnSubmitted(String isbn) {
+  void _onSearchSubmitted(String query) {
     // TODO: push online-search pre-filled with ISBN.
-    debugPrint('AddBook: ISBN submitted $isbn');
+    debugPrint('AddBook: Search submitted $query');
   }
 }
 
 // MARK: STAGGERED OPTION LABEL
-
 class _StaggeredOptionLabel extends StatelessWidget {
   const _StaggeredOptionLabel({
     required this.option,
@@ -343,134 +337,33 @@ class _StaggeredOptionLabel extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.008),
-          child: Text(
-            option.label,
-            textAlign: TextAlign.right,
-            style: InktomeTextStyles.headingMediumWithColor(
-              textColor,
-            ).copyWith(fontSize: screenSize.width * 0.10),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// MARK: ISBN FIELD
-
-class _IsbnField extends StatelessWidget {
-  const _IsbnField({
-    required this.animation,
-    required this.focusNode,
-    required this.controller,
-    required this.inputBg,
-    required this.textColor,
-    required this.labelColor,
-    required this.inputSubmitBg,
-    required this.inputSubmitTextColor,
-    required this.onSubmit,
-  });
-
-  final Animation<double> animation;
-  final FocusNode focusNode;
-  final TextEditingController controller;
-  final Color inputBg;
-  final Color textColor;
-  final Color labelColor;
-  final Color inputSubmitBg;
-  final Color inputSubmitTextColor;
-  final ValueChanged<String> onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (context, child) => Opacity(
-        opacity: animation.value.clamp(0.0, 1.0),
-        child: Transform.translate(
-          offset: Offset(0, 20 * (1 - animation.value)),
-          child: child,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: InktomeSpacing.xs),
-            child: Text(
-              'DO YOU KNOW THE ISBN?',
-              style: InktomeTextStyles.buttonWithColor(
-                labelColor,
-              ).copyWith(letterSpacing: 1.2, fontWeight: FontWeight.w900),
-            ),
-          ),
-          DashedBorder(
-            color: labelColor,
-            radius: InktomeSpacing.radiusLg,
-            child: SquircleClip(
-              radius: InktomeSpacing.radiusLg,
-              child: ColoredBox(
-                color: inputBg,
-                child: Padding(
-                  padding: const EdgeInsets.all(InktomeSpacing.sm),
-                  child: TextField(
-                    focusNode: focusNode,
-                    controller: controller,
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: onSubmit,
-                    style: InktomeTextStyles.buttonWithColor(
-                      textColor,
-                    ).copyWith(fontSize: 18),
-                    decoration: InputDecoration(
-                      fillColor: Colors.transparent,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: InktomeSpacing.md,
-                        vertical: InktomeSpacing.md,
-                      ),
-                      hintText: 'enter isbn',
-                      hintStyle: InktomeTextStyles.buttonWithColor(
-                        labelColor,
-                      ).copyWith(fontSize: 18),
-                      suffixIcon: SizedBox(
-                        width: 48,
-                        height: 48,
-                        child: SquircleClip(
-                          radius: InktomeSpacing.radiusMd,
-                          child: ColoredBox(
-                            color: inputSubmitBg,
-                            child: Center(
-                              child: IgnorePointer(
-                                child: LucideAnimatedIcon(
-                                  icon: arrow_right,
-                                  color: inputSubmitTextColor,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            spacing: InktomeSpacing.sm,
+            children: [
+              Text(
+                option.label,
+                textAlign: TextAlign.right,
+                style: InktomeTextStyles.headingMediumWithColor(
+                  textColor,
+                ).copyWith(fontSize: screenSize.width * 0.10),
               ),
-            ),
+              LucideAnimatedIcon(
+                icon: option.icon,
+                size: 24,
+                color: textColor,
+                onTap: onTap,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
 // MARK: OPTION DATA CLASS
-
 class _OverlayOption {
   const _OverlayOption({required this.label, required this.icon});
   final String label;
