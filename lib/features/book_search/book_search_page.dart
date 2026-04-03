@@ -95,16 +95,6 @@ class _BookSearchPageState extends State<BookSearchPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Close button — taps pop the route.
-                  _CloseButton(
-                    borderColor: textColor,
-                    iconColor: textColor,
-                    iconBg: inputBg,
-                    onTap: () => Navigator.of(context).pop(),
-                  ),
-
-                  const SizedBox(width: InktomeSpacing.xs),
-
                   // Search bar — takes all remaining horizontal space.
                   Expanded(
                     child: _SearchBar(
@@ -117,6 +107,16 @@ class _BookSearchPageState extends State<BookSearchPage> {
                       submitIconColor: inputSubmitTextColor,
                       onSubmit: (_) => _onSubmit(),
                     ),
+                  ),
+
+                  const SizedBox(width: InktomeSpacing.md),
+
+                  // Close button — taps pop the route.
+                  _CloseButton(
+                    borderColor: textColor,
+                    iconColor: textColor,
+                    iconBg: inputBg,
+                    onTap: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
@@ -169,7 +169,7 @@ class _IdleState extends StatelessWidget {
           horizontal: InktomeSpacing.pagePadding,
         ),
         child: Text(
-          'what are we looking for?',
+          'what book are you looking for?',
           textAlign: TextAlign.center,
           style: InktomeTextStyles.headingMediumWithColor(textColor),
         ),
@@ -282,7 +282,7 @@ class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashedBorder(
-      color: labelColor,
+      color: textColor,
       radius: InktomeSpacing.radiusLg,
       child: SquircleClip(
         radius: InktomeSpacing.radiusLg,
@@ -303,7 +303,7 @@ class _SearchBar extends StatelessWidget {
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: InktomeSpacing.md,
+                  horizontal: InktomeSpacing.xs,
                   vertical: InktomeSpacing.md,
                 ),
                 hintText: 'title, author or isbn',
