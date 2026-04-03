@@ -16,13 +16,27 @@ class InktomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final shadowColor = isDark
+        // ? Color.fromRGBO(255, 255, 255, 0.08)  // White shadow for dark mode
+        // ? InktomeColors.black.withValues(alpha: 0.45)
+        ? Colors.black.withValues(alpha: 0.45)
+        : Color.fromRGBO(0, 0, 0, 0.15); // Black shadow for light mode
+
     return Container(
       decoration: ShapeDecoration(
         color: cardColor,
         shape: RoundedSuperellipseBorder(
           borderRadius: BorderRadius.circular(cardBorderRadius),
-          side: BorderSide(color: borderColor, width: 1.5),
         ),
+        shadows: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 3,
+            spreadRadius: 0,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: child,
     );

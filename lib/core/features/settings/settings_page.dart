@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 : InktomeColors.cardOnWhite,
             cardBorderRadius: InktomeSpacing.radiusXl,
             child: Padding(
-              padding: const EdgeInsets.all(InktomeSpacing.xs - 2),
+              padding: const EdgeInsets.all(InktomeSpacing.xs),
               child: DashedBorder(
                 color: textColor,
                 radius: 20.0,
