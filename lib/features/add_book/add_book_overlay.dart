@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
@@ -284,11 +285,25 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
 
   // MARK: CALLBACKS
 
+  // MARK: onOptionTapped
   void _onOptionTapped(String label) {
-    // TODO: push the relevant full-screen route.
-    debugPrint('AddBook: tapped $label');
+    // Don't dismiss the overlay — push the route on top of it.
+    // When the user closes the route, they land back here naturally.
+    // The overlay only dismisses once a book is actually saved, or
+    // when the user explicitly closes it with ×.
+    switch (label) {
+      case 'online search':
+        context.push('/search');
+      case 'barcode scan':
+        // TODO: launch barcode scanner, then push('/search?q=ISBN').
+        break;
+      case 'manual input':
+        // TODO: push('/book/new').
+        break;
+    }
   }
 
+  // MARK: onIsbnSubmitted
   void _onIsbnSubmitted(String isbn) {
     // TODO: push online-search pre-filled with ISBN.
     debugPrint('AddBook: ISBN submitted $isbn');

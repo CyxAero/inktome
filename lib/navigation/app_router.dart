@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inktome/core/features/home/home_page.dart';
 import 'package:inktome/core/features/library/library_page.dart';
 import 'package:inktome/core/features/settings/settings_page.dart';
+import 'package:inktome/features/book_search/book_search_page.dart';
 import 'package:inktome/navigation/app_shell.dart';
 
 /// All routes for Inktome.
@@ -17,8 +19,8 @@ import 'package:inktome/navigation/app_shell.dart';
 ///   /library   → LibraryPage
 ///   /settings  → SettingsPage
 ///
-/// Routes outside the shell (full-screen modals — nav bar hidden):
-///   /add-book  → AddBookModal  (not yet built — stub for now)
+/// Routes outside the shell (nav bar hidden):
+///   /search  → BookSearchPage
 ///
 /// ## Adding a new modal route
 ///
@@ -58,6 +60,18 @@ final appRouter = GoRouter(
               const NoTransitionPage(child: SettingsPage()),
         ),
       ],
+    ),
+
+    // MARK: FULL-SCREEN ROUTES — no nav bar
+    //
+    // These sit alongside the ShellRoute, not inside it.
+    // AppShell never wraps them, so the nav bar never renders.
+    GoRoute(
+      path: '/search',
+      pageBuilder: (context, state) {
+        final query = state.uri.queryParameters['q'];
+        return MaterialPage(child: BookSearchPage(initialQuery: query));
+      },
     ),
   ],
 );
