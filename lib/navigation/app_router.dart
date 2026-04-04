@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:inktome/core/features/home/home_page.dart';
 import 'package:inktome/core/features/library/library_page.dart';
 import 'package:inktome/core/features/settings/settings_page.dart';
+import 'package:inktome/features/barcode_scanner/barcode_scanner_page.dart';
 import 'package:inktome/features/book_search/book_search_page.dart';
 import 'package:inktome/navigation/app_shell.dart';
 
@@ -72,6 +73,11 @@ final appRouter = GoRouter(
         final query = state.uri.queryParameters['q'];
         return MaterialPage(child: BookSearchPage(initialQuery: query));
       },
+    ),
+    GoRoute(
+      path: '/barcode-scan',
+      pageBuilder: (context, state) =>
+          const NoTransitionPage(child: BarcodeScannerPage()),
     ),
   ],
 );

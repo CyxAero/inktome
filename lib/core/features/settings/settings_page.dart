@@ -42,9 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: IntrinsicHeight(
           child: InktomeCard(
             borderColor: textColor,
-            cardColor: isDark
-                ? InktomeColors.cardOnBlack
-                : InktomeColors.cardOnWhite,
+            cardColor: isDark ? InktomeColors.black : InktomeColors.white,
             cardBorderRadius: InktomeSpacing.radiusXl,
             child: Padding(
               padding: const EdgeInsets.all(InktomeSpacing.xs),

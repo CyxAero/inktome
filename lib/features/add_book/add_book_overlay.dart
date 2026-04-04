@@ -247,7 +247,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
               // Duration is slightly longer than the keyboard animation (~250ms)
               // so the field trails the keyboard naturally rather than snapping.
               AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 left: InktomeSpacing.pagePadding,
                 right: InktomeSpacing.pagePadding,
@@ -257,7 +257,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
                   child: AnimatedBuilder(
                     animation: CurvedAnimation(
                       parent: _searchController,
-                      curve: Curves.easeOutBack,
+                      curve: Curves.easeInOut,
                     ),
                     builder: (context, child) => Opacity(
                       opacity: _searchController.value.clamp(0.0, 1.0),
@@ -313,7 +313,7 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
   // MARK: CALLBACKS
 
   // MARK: onOptionTapped
-  void _onOptionTapped(String label) {
+  void _onOptionTapped(String label) async {
     // Don't dismiss the overlay — push the route on top of it.
     // When the user closes the route, they land back here naturally.
     // The overlay only dismisses once a book is actually saved, or
@@ -323,7 +323,17 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
       //   context.push('/search');
       case 'barcode scan':
         // TODO: launch barcode scanner, then push('/search?q=ISBN').
-        break;
+        // 1. Open the scanner page and wait for a result
+        final barcode = await context.push<String>('/barcode-scan');
+
+        // 2. If a valid barcode was returned and the widget is still in the tree
+        if (barcode != null && mounted) {
+          // 3. Dismiss the overlay
+          dismissAddBookOverlay();
+
+          // 4. Navigate directly to the search page passing the barcode
+          context.push('/search?q=${Uri.encodeComponent(barcode)}');
+        }
       case 'manual input':
         // TODO: push('/book/new').
         break;
