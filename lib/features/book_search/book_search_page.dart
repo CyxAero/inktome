@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:inktome/core/data/models/book_search_result.dart';
+import 'package:inktome/core/data/services/book_search_service.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
 import 'package:inktome/core/widgets/app_background.dart';
 import 'package:inktome/core/widgets/custom_dashed_border.dart';
 import 'package:inktome/core/widgets/search_field.dart';
+import 'package:provider/provider.dart';
 
 class BookSearchPage extends StatefulWidget {
   const BookSearchPage({super.key, this.initialQuery});
@@ -21,13 +24,14 @@ class _BookSearchPageState extends State<BookSearchPage> {
   late final TextEditingController _searchController;
   final _searchFocusNode = FocusNode();
   _SearchState _searchState = _SearchState.idle;
+  List<BookSearchResult> _results = [];
+  String _errorMessage = '';
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController(text: widget.initialQuery ?? '');
     if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
-      // Query arrived pre-filled — fire immediately after first frame.
       WidgetsBinding.instance.addPostFrameCallback((_) => _onSubmit());
     }
   }
@@ -39,12 +43,34 @@ class _BookSearchPageState extends State<BookSearchPage> {
     super.dispose();
   }
 
-  void _onSubmit() {
+  Future<void> _onSubmit() async {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
     _searchFocusNode.unfocus();
-    setState(() => _searchState = _SearchState.loading);
-    // TODO: call BookSearchService(query), then setState to results or empty.
+    setState(() {
+      _searchState = _SearchState.loading;
+      _errorMessage = '';
+    });
+
+    final service = context.read<BookSearchService>();
+    final outcome = await service.search(query);
+
+    // Guard: widget may have been disposed while the request was in flight.
+    if (!mounted) return;
+
+    setState(() {
+      switch (outcome) {
+        case SearchSuccess(:final results):
+          _results = results;
+          _searchState = _SearchState.results;
+        case SearchEmpty():
+          _results = [];
+          _searchState = _SearchState.empty;
+        case SearchError(:final message):
+          _errorMessage = message;
+          _searchState = _SearchState.error;
+      }
+    });
   }
 
   @override
@@ -82,6 +108,8 @@ class _BookSearchPageState extends State<BookSearchPage> {
                 state: _searchState,
                 textColor: textColor,
                 labelColor: labelColor,
+                results: _results,
+                errorMessage: _errorMessage,
               ),
             ),
 
@@ -134,18 +162,22 @@ class _BookSearchPageState extends State<BookSearchPage> {
 }
 
 // MARK: SEARCH BODY
-enum _SearchState { idle, loading, results, empty }
+enum _SearchState { idle, loading, results, empty, error }
 
 class _SearchBody extends StatelessWidget {
   const _SearchBody({
     required this.state,
     required this.textColor,
     required this.labelColor,
+    required this.results,
+    required this.errorMessage,
   });
 
   final _SearchState state;
   final Color textColor;
   final Color labelColor;
+  final List<BookSearchResult> results;
+  final String errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -159,12 +191,17 @@ class _SearchBody extends StatelessWidget {
           labelColor: labelColor,
         ),
         _SearchState.loading => const _LoadingState(key: ValueKey('loading')),
-        _SearchState.results => const _ResultsGrid(
+        _SearchState.results => _ResultsGrid(
           key: ValueKey('results'),
-          results: [],
+          results: results,
         ),
         _SearchState.empty => _EmptyState(
           key: const ValueKey('empty'),
+          labelColor: labelColor,
+        ),
+        _SearchState.error => _ErrorState(
+          key: const ValueKey('error'),
+          message: errorMessage, // pass from parent
           labelColor: labelColor,
         ),
       },
@@ -205,12 +242,16 @@ class _LoadingState extends StatelessWidget {
 
 class _ResultsGrid extends StatelessWidget {
   const _ResultsGrid({super.key, required this.results});
-  final List<Object> results; // TODO: type as List<BookSearchResult>
+  final List<BookSearchResult> results;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: build results grid.
-    return const SizedBox.shrink();
+    // TODO: build cover grid — next step.
+    return ListView.builder(
+      padding: const EdgeInsets.all(InktomeSpacing.pagePadding),
+      itemCount: results.length,
+      itemBuilder: (context, index) => Text(results[index].title),
+    );
   }
 }
 
@@ -224,6 +265,32 @@ class _EmptyState extends StatelessWidget {
       child: Text(
         'nothing found.',
         style: InktomeTextStyles.headingMediumWithColor(labelColor),
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({
+    super.key,
+    required this.message,
+    required this.labelColor,
+  });
+  final String message;
+  final Color labelColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: InktomeSpacing.pagePadding,
+        ),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: InktomeTextStyles.headingSmallWithColor(labelColor),
+        ),
       ),
     );
   }
