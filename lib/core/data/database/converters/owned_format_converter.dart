@@ -9,7 +9,7 @@ class OwnedFormatConverter extends TypeConverter<OwnedFormat?, String?> {
     'physical' => OwnedFormat.physical,
     'ebook' => OwnedFormat.ebook,
     'audiobook' => OwnedFormat.audiobook,
-    'pdf' => OwnedFormat.pdf,
+    // 'pdf' => OwnedFormat.pdf,
     _ => null,
   };
 
@@ -18,7 +18,7 @@ class OwnedFormatConverter extends TypeConverter<OwnedFormat?, String?> {
     OwnedFormat.physical => 'physical',
     OwnedFormat.ebook => 'ebook',
     OwnedFormat.audiobook => 'audiobook',
-    OwnedFormat.pdf => 'pdf',
+    // OwnedFormat.pdf => 'pdf',
     null => null,
   };
 }

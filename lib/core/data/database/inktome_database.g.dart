@@ -234,6 +234,52 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   ).withConverter<OwnedFormat?>($BooksTable.$converterownedFormat);
+  @override
+  late final GeneratedColumnWithTypeConverter<ReadFormat?, String> readFormat =
+      GeneratedColumn<String>(
+        'read_format',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<ReadFormat?>($BooksTable.$converterreadFormat);
+  static const VerificationMeta _isBorrowedMeta = const VerificationMeta(
+    'isBorrowed',
+  );
+  @override
+  late final GeneratedColumn<bool> isBorrowed = GeneratedColumn<bool>(
+    'is_borrowed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_borrowed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _borrowSourceMeta = const VerificationMeta(
+    'borrowSource',
+  );
+  @override
+  late final GeneratedColumn<String> borrowSource = GeneratedColumn<String>(
+    'borrow_source',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _borrowReturnedAtMeta = const VerificationMeta(
+    'borrowReturnedAt',
+  );
+  @override
+  late final GeneratedColumn<int> borrowReturnedAt = GeneratedColumn<int>(
+    'borrow_returned_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nfcTagIdMeta = const VerificationMeta(
     'nfcTagId',
   );
@@ -290,6 +336,10 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
     dateFinished,
     isOwned,
     ownedFormat,
+    readFormat,
+    isBorrowed,
+    borrowSource,
+    borrowReturnedAt,
     nfcTagId,
     source,
     customData,
@@ -442,6 +492,30 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
         isOwned.isAcceptableOrUnknown(data['is_owned']!, _isOwnedMeta),
       );
     }
+    if (data.containsKey('is_borrowed')) {
+      context.handle(
+        _isBorrowedMeta,
+        isBorrowed.isAcceptableOrUnknown(data['is_borrowed']!, _isBorrowedMeta),
+      );
+    }
+    if (data.containsKey('borrow_source')) {
+      context.handle(
+        _borrowSourceMeta,
+        borrowSource.isAcceptableOrUnknown(
+          data['borrow_source']!,
+          _borrowSourceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('borrow_returned_at')) {
+      context.handle(
+        _borrowReturnedAtMeta,
+        borrowReturnedAt.isAcceptableOrUnknown(
+          data['borrow_returned_at']!,
+          _borrowReturnedAtMeta,
+        ),
+      );
+    }
     if (data.containsKey('nfc_tag_id')) {
       context.handle(
         _nfcTagIdMeta,
@@ -557,6 +631,24 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
           data['${effectivePrefix}owned_format'],
         ),
       ),
+      readFormat: $BooksTable.$converterreadFormat.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}read_format'],
+        ),
+      ),
+      isBorrowed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_borrowed'],
+      )!,
+      borrowSource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}borrow_source'],
+      ),
+      borrowReturnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}borrow_returned_at'],
+      ),
       nfcTagId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}nfc_tag_id'],
@@ -581,6 +673,8 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       const BookStatusConverter();
   static TypeConverter<OwnedFormat?, String?> $converterownedFormat =
       const OwnedFormatConverter();
+  static TypeConverter<ReadFormat?, String?> $converterreadFormat =
+      const ReadFormatConverter();
 }
 
 class Book extends DataClass implements Insertable<Book> {
@@ -605,6 +699,10 @@ class Book extends DataClass implements Insertable<Book> {
   final int? dateFinished;
   final bool isOwned;
   final OwnedFormat? ownedFormat;
+  final ReadFormat? readFormat;
+  final bool isBorrowed;
+  final String? borrowSource;
+  final int? borrowReturnedAt;
   final String? nfcTagId;
   final String source;
   final String? customData;
@@ -630,6 +728,10 @@ class Book extends DataClass implements Insertable<Book> {
     this.dateFinished,
     required this.isOwned,
     this.ownedFormat,
+    this.readFormat,
+    required this.isBorrowed,
+    this.borrowSource,
+    this.borrowReturnedAt,
     this.nfcTagId,
     required this.source,
     this.customData,
@@ -696,6 +798,18 @@ class Book extends DataClass implements Insertable<Book> {
         $BooksTable.$converterownedFormat.toSql(ownedFormat),
       );
     }
+    if (!nullToAbsent || readFormat != null) {
+      map['read_format'] = Variable<String>(
+        $BooksTable.$converterreadFormat.toSql(readFormat),
+      );
+    }
+    map['is_borrowed'] = Variable<bool>(isBorrowed);
+    if (!nullToAbsent || borrowSource != null) {
+      map['borrow_source'] = Variable<String>(borrowSource);
+    }
+    if (!nullToAbsent || borrowReturnedAt != null) {
+      map['borrow_returned_at'] = Variable<int>(borrowReturnedAt);
+    }
     if (!nullToAbsent || nfcTagId != null) {
       map['nfc_tag_id'] = Variable<String>(nfcTagId);
     }
@@ -759,6 +873,16 @@ class Book extends DataClass implements Insertable<Book> {
       ownedFormat: ownedFormat == null && nullToAbsent
           ? const Value.absent()
           : Value(ownedFormat),
+      readFormat: readFormat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(readFormat),
+      isBorrowed: Value(isBorrowed),
+      borrowSource: borrowSource == null && nullToAbsent
+          ? const Value.absent()
+          : Value(borrowSource),
+      borrowReturnedAt: borrowReturnedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(borrowReturnedAt),
       nfcTagId: nfcTagId == null && nullToAbsent
           ? const Value.absent()
           : Value(nfcTagId),
@@ -796,6 +920,10 @@ class Book extends DataClass implements Insertable<Book> {
       dateFinished: serializer.fromJson<int?>(json['dateFinished']),
       isOwned: serializer.fromJson<bool>(json['isOwned']),
       ownedFormat: serializer.fromJson<OwnedFormat?>(json['ownedFormat']),
+      readFormat: serializer.fromJson<ReadFormat?>(json['readFormat']),
+      isBorrowed: serializer.fromJson<bool>(json['isBorrowed']),
+      borrowSource: serializer.fromJson<String?>(json['borrowSource']),
+      borrowReturnedAt: serializer.fromJson<int?>(json['borrowReturnedAt']),
       nfcTagId: serializer.fromJson<String?>(json['nfcTagId']),
       source: serializer.fromJson<String>(json['source']),
       customData: serializer.fromJson<String?>(json['customData']),
@@ -826,6 +954,10 @@ class Book extends DataClass implements Insertable<Book> {
       'dateFinished': serializer.toJson<int?>(dateFinished),
       'isOwned': serializer.toJson<bool>(isOwned),
       'ownedFormat': serializer.toJson<OwnedFormat?>(ownedFormat),
+      'readFormat': serializer.toJson<ReadFormat?>(readFormat),
+      'isBorrowed': serializer.toJson<bool>(isBorrowed),
+      'borrowSource': serializer.toJson<String?>(borrowSource),
+      'borrowReturnedAt': serializer.toJson<int?>(borrowReturnedAt),
       'nfcTagId': serializer.toJson<String?>(nfcTagId),
       'source': serializer.toJson<String>(source),
       'customData': serializer.toJson<String?>(customData),
@@ -854,6 +986,10 @@ class Book extends DataClass implements Insertable<Book> {
     Value<int?> dateFinished = const Value.absent(),
     bool? isOwned,
     Value<OwnedFormat?> ownedFormat = const Value.absent(),
+    Value<ReadFormat?> readFormat = const Value.absent(),
+    bool? isBorrowed,
+    Value<String?> borrowSource = const Value.absent(),
+    Value<int?> borrowReturnedAt = const Value.absent(),
     Value<String?> nfcTagId = const Value.absent(),
     String? source,
     Value<String?> customData = const Value.absent(),
@@ -885,6 +1021,12 @@ class Book extends DataClass implements Insertable<Book> {
     dateFinished: dateFinished.present ? dateFinished.value : this.dateFinished,
     isOwned: isOwned ?? this.isOwned,
     ownedFormat: ownedFormat.present ? ownedFormat.value : this.ownedFormat,
+    readFormat: readFormat.present ? readFormat.value : this.readFormat,
+    isBorrowed: isBorrowed ?? this.isBorrowed,
+    borrowSource: borrowSource.present ? borrowSource.value : this.borrowSource,
+    borrowReturnedAt: borrowReturnedAt.present
+        ? borrowReturnedAt.value
+        : this.borrowReturnedAt,
     nfcTagId: nfcTagId.present ? nfcTagId.value : this.nfcTagId,
     source: source ?? this.source,
     customData: customData.present ? customData.value : this.customData,
@@ -930,6 +1072,18 @@ class Book extends DataClass implements Insertable<Book> {
       ownedFormat: data.ownedFormat.present
           ? data.ownedFormat.value
           : this.ownedFormat,
+      readFormat: data.readFormat.present
+          ? data.readFormat.value
+          : this.readFormat,
+      isBorrowed: data.isBorrowed.present
+          ? data.isBorrowed.value
+          : this.isBorrowed,
+      borrowSource: data.borrowSource.present
+          ? data.borrowSource.value
+          : this.borrowSource,
+      borrowReturnedAt: data.borrowReturnedAt.present
+          ? data.borrowReturnedAt.value
+          : this.borrowReturnedAt,
       nfcTagId: data.nfcTagId.present ? data.nfcTagId.value : this.nfcTagId,
       source: data.source.present ? data.source.value : this.source,
       customData: data.customData.present
@@ -962,6 +1116,10 @@ class Book extends DataClass implements Insertable<Book> {
           ..write('dateFinished: $dateFinished, ')
           ..write('isOwned: $isOwned, ')
           ..write('ownedFormat: $ownedFormat, ')
+          ..write('readFormat: $readFormat, ')
+          ..write('isBorrowed: $isBorrowed, ')
+          ..write('borrowSource: $borrowSource, ')
+          ..write('borrowReturnedAt: $borrowReturnedAt, ')
           ..write('nfcTagId: $nfcTagId, ')
           ..write('source: $source, ')
           ..write('customData: $customData')
@@ -992,6 +1150,10 @@ class Book extends DataClass implements Insertable<Book> {
     dateFinished,
     isOwned,
     ownedFormat,
+    readFormat,
+    isBorrowed,
+    borrowSource,
+    borrowReturnedAt,
     nfcTagId,
     source,
     customData,
@@ -1021,6 +1183,10 @@ class Book extends DataClass implements Insertable<Book> {
           other.dateFinished == this.dateFinished &&
           other.isOwned == this.isOwned &&
           other.ownedFormat == this.ownedFormat &&
+          other.readFormat == this.readFormat &&
+          other.isBorrowed == this.isBorrowed &&
+          other.borrowSource == this.borrowSource &&
+          other.borrowReturnedAt == this.borrowReturnedAt &&
           other.nfcTagId == this.nfcTagId &&
           other.source == this.source &&
           other.customData == this.customData);
@@ -1048,6 +1214,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
   final Value<int?> dateFinished;
   final Value<bool> isOwned;
   final Value<OwnedFormat?> ownedFormat;
+  final Value<ReadFormat?> readFormat;
+  final Value<bool> isBorrowed;
+  final Value<String?> borrowSource;
+  final Value<int?> borrowReturnedAt;
   final Value<String?> nfcTagId;
   final Value<String> source;
   final Value<String?> customData;
@@ -1073,6 +1243,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.dateFinished = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.ownedFormat = const Value.absent(),
+    this.readFormat = const Value.absent(),
+    this.isBorrowed = const Value.absent(),
+    this.borrowSource = const Value.absent(),
+    this.borrowReturnedAt = const Value.absent(),
     this.nfcTagId = const Value.absent(),
     this.source = const Value.absent(),
     this.customData = const Value.absent(),
@@ -1099,6 +1273,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.dateFinished = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.ownedFormat = const Value.absent(),
+    this.readFormat = const Value.absent(),
+    this.isBorrowed = const Value.absent(),
+    this.borrowSource = const Value.absent(),
+    this.borrowReturnedAt = const Value.absent(),
     this.nfcTagId = const Value.absent(),
     this.source = const Value.absent(),
     this.customData = const Value.absent(),
@@ -1126,6 +1304,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Expression<int>? dateFinished,
     Expression<bool>? isOwned,
     Expression<String>? ownedFormat,
+    Expression<String>? readFormat,
+    Expression<bool>? isBorrowed,
+    Expression<String>? borrowSource,
+    Expression<int>? borrowReturnedAt,
     Expression<String>? nfcTagId,
     Expression<String>? source,
     Expression<String>? customData,
@@ -1152,6 +1334,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
       if (dateFinished != null) 'date_finished': dateFinished,
       if (isOwned != null) 'is_owned': isOwned,
       if (ownedFormat != null) 'owned_format': ownedFormat,
+      if (readFormat != null) 'read_format': readFormat,
+      if (isBorrowed != null) 'is_borrowed': isBorrowed,
+      if (borrowSource != null) 'borrow_source': borrowSource,
+      if (borrowReturnedAt != null) 'borrow_returned_at': borrowReturnedAt,
       if (nfcTagId != null) 'nfc_tag_id': nfcTagId,
       if (source != null) 'source': source,
       if (customData != null) 'custom_data': customData,
@@ -1180,6 +1366,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Value<int?>? dateFinished,
     Value<bool>? isOwned,
     Value<OwnedFormat?>? ownedFormat,
+    Value<ReadFormat?>? readFormat,
+    Value<bool>? isBorrowed,
+    Value<String?>? borrowSource,
+    Value<int?>? borrowReturnedAt,
     Value<String?>? nfcTagId,
     Value<String>? source,
     Value<String?>? customData,
@@ -1206,6 +1396,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
       dateFinished: dateFinished ?? this.dateFinished,
       isOwned: isOwned ?? this.isOwned,
       ownedFormat: ownedFormat ?? this.ownedFormat,
+      readFormat: readFormat ?? this.readFormat,
+      isBorrowed: isBorrowed ?? this.isBorrowed,
+      borrowSource: borrowSource ?? this.borrowSource,
+      borrowReturnedAt: borrowReturnedAt ?? this.borrowReturnedAt,
       nfcTagId: nfcTagId ?? this.nfcTagId,
       source: source ?? this.source,
       customData: customData ?? this.customData,
@@ -1282,6 +1476,20 @@ class BooksCompanion extends UpdateCompanion<Book> {
         $BooksTable.$converterownedFormat.toSql(ownedFormat.value),
       );
     }
+    if (readFormat.present) {
+      map['read_format'] = Variable<String>(
+        $BooksTable.$converterreadFormat.toSql(readFormat.value),
+      );
+    }
+    if (isBorrowed.present) {
+      map['is_borrowed'] = Variable<bool>(isBorrowed.value);
+    }
+    if (borrowSource.present) {
+      map['borrow_source'] = Variable<String>(borrowSource.value);
+    }
+    if (borrowReturnedAt.present) {
+      map['borrow_returned_at'] = Variable<int>(borrowReturnedAt.value);
+    }
     if (nfcTagId.present) {
       map['nfc_tag_id'] = Variable<String>(nfcTagId.value);
     }
@@ -1318,6 +1526,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
           ..write('dateFinished: $dateFinished, ')
           ..write('isOwned: $isOwned, ')
           ..write('ownedFormat: $ownedFormat, ')
+          ..write('readFormat: $readFormat, ')
+          ..write('isBorrowed: $isBorrowed, ')
+          ..write('borrowSource: $borrowSource, ')
+          ..write('borrowReturnedAt: $borrowReturnedAt, ')
           ..write('nfcTagId: $nfcTagId, ')
           ..write('source: $source, ')
           ..write('customData: $customData')
@@ -2076,6 +2288,409 @@ class BookTagsCompanion extends UpdateCompanion<BookTag> {
   }
 }
 
+class $GenresTable extends Genres with TableInfo<$GenresTable, Genre> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GenresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'genres';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Genre> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Genre map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Genre(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+    );
+  }
+
+  @override
+  $GenresTable createAlias(String alias) {
+    return $GenresTable(attachedDatabase, alias);
+  }
+}
+
+class Genre extends DataClass implements Insertable<Genre> {
+  final int id;
+  final String name;
+  const Genre({required this.id, required this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  GenresCompanion toCompanion(bool nullToAbsent) {
+    return GenresCompanion(id: Value(id), name: Value(name));
+  }
+
+  factory Genre.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Genre(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  Genre copyWith({int? id, String? name}) =>
+      Genre(id: id ?? this.id, name: name ?? this.name);
+  Genre copyWithCompanion(GenresCompanion data) {
+    return Genre(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Genre(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Genre && other.id == this.id && other.name == this.name);
+}
+
+class GenresCompanion extends UpdateCompanion<Genre> {
+  final Value<int> id;
+  final Value<String> name;
+  const GenresCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+  });
+  GenresCompanion.insert({this.id = const Value.absent(), required String name})
+    : name = Value(name);
+  static Insertable<Genre> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+    });
+  }
+
+  GenresCompanion copyWith({Value<int>? id, Value<String>? name}) {
+    return GenresCompanion(id: id ?? this.id, name: name ?? this.name);
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GenresCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BookGenresTable extends BookGenres
+    with TableInfo<$BookGenresTable, BookGenre> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BookGenresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
+  @override
+  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
+    'book_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES books (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _genreIdMeta = const VerificationMeta(
+    'genreId',
+  );
+  @override
+  late final GeneratedColumn<int> genreId = GeneratedColumn<int>(
+    'genre_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES genres (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [bookId, genreId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'book_genres';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BookGenre> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('book_id')) {
+      context.handle(
+        _bookIdMeta,
+        bookId.isAcceptableOrUnknown(data['book_id']!, _bookIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bookIdMeta);
+    }
+    if (data.containsKey('genre_id')) {
+      context.handle(
+        _genreIdMeta,
+        genreId.isAcceptableOrUnknown(data['genre_id']!, _genreIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_genreIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {bookId, genreId};
+  @override
+  BookGenre map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BookGenre(
+      bookId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}book_id'],
+      )!,
+      genreId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}genre_id'],
+      )!,
+    );
+  }
+
+  @override
+  $BookGenresTable createAlias(String alias) {
+    return $BookGenresTable(attachedDatabase, alias);
+  }
+}
+
+class BookGenre extends DataClass implements Insertable<BookGenre> {
+  final int bookId;
+  final int genreId;
+  const BookGenre({required this.bookId, required this.genreId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['book_id'] = Variable<int>(bookId);
+    map['genre_id'] = Variable<int>(genreId);
+    return map;
+  }
+
+  BookGenresCompanion toCompanion(bool nullToAbsent) {
+    return BookGenresCompanion(bookId: Value(bookId), genreId: Value(genreId));
+  }
+
+  factory BookGenre.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BookGenre(
+      bookId: serializer.fromJson<int>(json['bookId']),
+      genreId: serializer.fromJson<int>(json['genreId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'bookId': serializer.toJson<int>(bookId),
+      'genreId': serializer.toJson<int>(genreId),
+    };
+  }
+
+  BookGenre copyWith({int? bookId, int? genreId}) => BookGenre(
+    bookId: bookId ?? this.bookId,
+    genreId: genreId ?? this.genreId,
+  );
+  BookGenre copyWithCompanion(BookGenresCompanion data) {
+    return BookGenre(
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+      genreId: data.genreId.present ? data.genreId.value : this.genreId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BookGenre(')
+          ..write('bookId: $bookId, ')
+          ..write('genreId: $genreId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(bookId, genreId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BookGenre &&
+          other.bookId == this.bookId &&
+          other.genreId == this.genreId);
+}
+
+class BookGenresCompanion extends UpdateCompanion<BookGenre> {
+  final Value<int> bookId;
+  final Value<int> genreId;
+  final Value<int> rowid;
+  const BookGenresCompanion({
+    this.bookId = const Value.absent(),
+    this.genreId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BookGenresCompanion.insert({
+    required int bookId,
+    required int genreId,
+    this.rowid = const Value.absent(),
+  }) : bookId = Value(bookId),
+       genreId = Value(genreId);
+  static Insertable<BookGenre> custom({
+    Expression<int>? bookId,
+    Expression<int>? genreId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (bookId != null) 'book_id': bookId,
+      if (genreId != null) 'genre_id': genreId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BookGenresCompanion copyWith({
+    Value<int>? bookId,
+    Value<int>? genreId,
+    Value<int>? rowid,
+  }) {
+    return BookGenresCompanion(
+      bookId: bookId ?? this.bookId,
+      genreId: genreId ?? this.genreId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (bookId.present) {
+      map['book_id'] = Variable<int>(bookId.value);
+    }
+    if (genreId.present) {
+      map['genre_id'] = Variable<int>(genreId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BookGenresCompanion(')
+          ..write('bookId: $bookId, ')
+          ..write('genreId: $genreId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$InktomeDatabase extends GeneratedDatabase {
   _$InktomeDatabase(QueryExecutor e) : super(e);
   $InktomeDatabaseManager get managers => $InktomeDatabaseManager(this);
@@ -2083,6 +2698,8 @@ abstract class _$InktomeDatabase extends GeneratedDatabase {
   late final $NotesTable notes = $NotesTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $BookTagsTable bookTags = $BookTagsTable(this);
+  late final $GenresTable genres = $GenresTable(this);
+  late final $BookGenresTable bookGenres = $BookGenresTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2092,6 +2709,8 @@ abstract class _$InktomeDatabase extends GeneratedDatabase {
     notes,
     tags,
     bookTags,
+    genres,
+    bookGenres,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2115,6 +2734,20 @@ abstract class _$InktomeDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('book_tags', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'books',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('book_genres', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'genres',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('book_genres', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -2142,6 +2775,10 @@ typedef $$BooksTableCreateCompanionBuilder =
       Value<int?> dateFinished,
       Value<bool> isOwned,
       Value<OwnedFormat?> ownedFormat,
+      Value<ReadFormat?> readFormat,
+      Value<bool> isBorrowed,
+      Value<String?> borrowSource,
+      Value<int?> borrowReturnedAt,
       Value<String?> nfcTagId,
       Value<String> source,
       Value<String?> customData,
@@ -2169,6 +2806,10 @@ typedef $$BooksTableUpdateCompanionBuilder =
       Value<int?> dateFinished,
       Value<bool> isOwned,
       Value<OwnedFormat?> ownedFormat,
+      Value<ReadFormat?> readFormat,
+      Value<bool> isBorrowed,
+      Value<String?> borrowSource,
+      Value<int?> borrowReturnedAt,
       Value<String?> nfcTagId,
       Value<String> source,
       Value<String?> customData,
@@ -2211,6 +2852,24 @@ final class $$BooksTableReferences
     ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_bookTagsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$BookGenresTable, List<BookGenre>>
+  _bookGenresRefsTable(_$InktomeDatabase db) => MultiTypedResultKey.fromTable(
+    db.bookGenres,
+    aliasName: $_aliasNameGenerator(db.books.id, db.bookGenres.bookId),
+  );
+
+  $$BookGenresTableProcessedTableManager get bookGenresRefs {
+    final manager = $$BookGenresTableTableManager(
+      $_db,
+      $_db.bookGenres,
+    ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_bookGenresRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2333,6 +2992,27 @@ class $$BooksTableFilterComposer
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<ReadFormat?, ReadFormat, String>
+  get readFormat => $composableBuilder(
+    column: $table.readFormat,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get isBorrowed => $composableBuilder(
+    column: $table.isBorrowed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get borrowSource => $composableBuilder(
+    column: $table.borrowSource,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get borrowReturnedAt => $composableBuilder(
+    column: $table.borrowReturnedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get nfcTagId => $composableBuilder(
     column: $table.nfcTagId,
     builder: (column) => ColumnFilters(column),
@@ -2389,6 +3069,31 @@ class $$BooksTableFilterComposer
           }) => $$BookTagsTableFilterComposer(
             $db: $db,
             $table: $db.bookTags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> bookGenresRefs(
+    Expression<bool> Function($$BookGenresTableFilterComposer f) f,
+  ) {
+    final $$BookGenresTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.bookGenres,
+      getReferencedColumn: (t) => t.bookId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BookGenresTableFilterComposer(
+            $db: $db,
+            $table: $db.bookGenres,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2513,6 +3218,26 @@ class $$BooksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get readFormat => $composableBuilder(
+    column: $table.readFormat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isBorrowed => $composableBuilder(
+    column: $table.isBorrowed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get borrowSource => $composableBuilder(
+    column: $table.borrowSource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get borrowReturnedAt => $composableBuilder(
+    column: $table.borrowReturnedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get nfcTagId => $composableBuilder(
     column: $table.nfcTagId,
     builder: (column) => ColumnOrderings(column),
@@ -2621,6 +3346,27 @@ class $$BooksTableAnnotationComposer
         builder: (column) => column,
       );
 
+  GeneratedColumnWithTypeConverter<ReadFormat?, String> get readFormat =>
+      $composableBuilder(
+        column: $table.readFormat,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<bool> get isBorrowed => $composableBuilder(
+    column: $table.isBorrowed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get borrowSource => $composableBuilder(
+    column: $table.borrowSource,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get borrowReturnedAt => $composableBuilder(
+    column: $table.borrowReturnedAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get nfcTagId =>
       $composableBuilder(column: $table.nfcTagId, builder: (column) => column);
 
@@ -2681,6 +3427,31 @@ class $$BooksTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> bookGenresRefs<T extends Object>(
+    Expression<T> Function($$BookGenresTableAnnotationComposer a) f,
+  ) {
+    final $$BookGenresTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.bookGenres,
+      getReferencedColumn: (t) => t.bookId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BookGenresTableAnnotationComposer(
+            $db: $db,
+            $table: $db.bookGenres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$BooksTableTableManager
@@ -2696,7 +3467,11 @@ class $$BooksTableTableManager
           $$BooksTableUpdateCompanionBuilder,
           (Book, $$BooksTableReferences),
           Book,
-          PrefetchHooks Function({bool notesRefs, bool bookTagsRefs})
+          PrefetchHooks Function({
+            bool notesRefs,
+            bool bookTagsRefs,
+            bool bookGenresRefs,
+          })
         > {
   $$BooksTableTableManager(_$InktomeDatabase db, $BooksTable table)
     : super(
@@ -2732,6 +3507,10 @@ class $$BooksTableTableManager
                 Value<int?> dateFinished = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<OwnedFormat?> ownedFormat = const Value.absent(),
+                Value<ReadFormat?> readFormat = const Value.absent(),
+                Value<bool> isBorrowed = const Value.absent(),
+                Value<String?> borrowSource = const Value.absent(),
+                Value<int?> borrowReturnedAt = const Value.absent(),
                 Value<String?> nfcTagId = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<String?> customData = const Value.absent(),
@@ -2757,6 +3536,10 @@ class $$BooksTableTableManager
                 dateFinished: dateFinished,
                 isOwned: isOwned,
                 ownedFormat: ownedFormat,
+                readFormat: readFormat,
+                isBorrowed: isBorrowed,
+                borrowSource: borrowSource,
+                borrowReturnedAt: borrowReturnedAt,
                 nfcTagId: nfcTagId,
                 source: source,
                 customData: customData,
@@ -2784,6 +3567,10 @@ class $$BooksTableTableManager
                 Value<int?> dateFinished = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<OwnedFormat?> ownedFormat = const Value.absent(),
+                Value<ReadFormat?> readFormat = const Value.absent(),
+                Value<bool> isBorrowed = const Value.absent(),
+                Value<String?> borrowSource = const Value.absent(),
+                Value<int?> borrowReturnedAt = const Value.absent(),
                 Value<String?> nfcTagId = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<String?> customData = const Value.absent(),
@@ -2809,6 +3596,10 @@ class $$BooksTableTableManager
                 dateFinished: dateFinished,
                 isOwned: isOwned,
                 ownedFormat: ownedFormat,
+                readFormat: readFormat,
+                isBorrowed: isBorrowed,
+                borrowSource: borrowSource,
+                borrowReturnedAt: borrowReturnedAt,
                 nfcTagId: nfcTagId,
                 source: source,
                 customData: customData,
@@ -2819,43 +3610,73 @@ class $$BooksTableTableManager
                     (e.readTable(table), $$BooksTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({notesRefs = false, bookTagsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (notesRefs) db.notes,
-                if (bookTagsRefs) db.bookTags,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (notesRefs)
-                    await $_getPrefetchedData<Book, $BooksTable, Note>(
-                      currentTable: table,
-                      referencedTable: $$BooksTableReferences._notesRefsTable(
-                        db,
-                      ),
-                      managerFromTypedResult: (p0) =>
-                          $$BooksTableReferences(db, table, p0).notesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.bookId == item.id),
-                      typedResults: items,
-                    ),
-                  if (bookTagsRefs)
-                    await $_getPrefetchedData<Book, $BooksTable, BookTag>(
-                      currentTable: table,
-                      referencedTable: $$BooksTableReferences
-                          ._bookTagsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$BooksTableReferences(db, table, p0).bookTagsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.bookId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                notesRefs = false,
+                bookTagsRefs = false,
+                bookGenresRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (notesRefs) db.notes,
+                    if (bookTagsRefs) db.bookTags,
+                    if (bookGenresRefs) db.bookGenres,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (notesRefs)
+                        await $_getPrefetchedData<Book, $BooksTable, Note>(
+                          currentTable: table,
+                          referencedTable: $$BooksTableReferences
+                              ._notesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BooksTableReferences(db, table, p0).notesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bookId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (bookTagsRefs)
+                        await $_getPrefetchedData<Book, $BooksTable, BookTag>(
+                          currentTable: table,
+                          referencedTable: $$BooksTableReferences
+                              ._bookTagsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BooksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).bookTagsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bookId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (bookGenresRefs)
+                        await $_getPrefetchedData<Book, $BooksTable, BookGenre>(
+                          currentTable: table,
+                          referencedTable: $$BooksTableReferences
+                              ._bookGenresRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BooksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).bookGenresRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bookId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -2872,7 +3693,11 @@ typedef $$BooksTableProcessedTableManager =
       $$BooksTableUpdateCompanionBuilder,
       (Book, $$BooksTableReferences),
       Book,
-      PrefetchHooks Function({bool notesRefs, bool bookTagsRefs})
+      PrefetchHooks Function({
+        bool notesRefs,
+        bool bookTagsRefs,
+        bool bookGenresRefs,
+      })
     >;
 typedef $$NotesTableCreateCompanionBuilder =
     NotesCompanion Function({
@@ -3743,6 +4568,567 @@ typedef $$BookTagsTableProcessedTableManager =
       BookTag,
       PrefetchHooks Function({bool bookId, bool tagId})
     >;
+typedef $$GenresTableCreateCompanionBuilder =
+    GenresCompanion Function({Value<int> id, required String name});
+typedef $$GenresTableUpdateCompanionBuilder =
+    GenresCompanion Function({Value<int> id, Value<String> name});
+
+final class $$GenresTableReferences
+    extends BaseReferences<_$InktomeDatabase, $GenresTable, Genre> {
+  $$GenresTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$BookGenresTable, List<BookGenre>>
+  _bookGenresRefsTable(_$InktomeDatabase db) => MultiTypedResultKey.fromTable(
+    db.bookGenres,
+    aliasName: $_aliasNameGenerator(db.genres.id, db.bookGenres.genreId),
+  );
+
+  $$BookGenresTableProcessedTableManager get bookGenresRefs {
+    final manager = $$BookGenresTableTableManager(
+      $_db,
+      $_db.bookGenres,
+    ).filter((f) => f.genreId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_bookGenresRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$GenresTableFilterComposer
+    extends Composer<_$InktomeDatabase, $GenresTable> {
+  $$GenresTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> bookGenresRefs(
+    Expression<bool> Function($$BookGenresTableFilterComposer f) f,
+  ) {
+    final $$BookGenresTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.bookGenres,
+      getReferencedColumn: (t) => t.genreId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BookGenresTableFilterComposer(
+            $db: $db,
+            $table: $db.bookGenres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GenresTableOrderingComposer
+    extends Composer<_$InktomeDatabase, $GenresTable> {
+  $$GenresTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$GenresTableAnnotationComposer
+    extends Composer<_$InktomeDatabase, $GenresTable> {
+  $$GenresTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  Expression<T> bookGenresRefs<T extends Object>(
+    Expression<T> Function($$BookGenresTableAnnotationComposer a) f,
+  ) {
+    final $$BookGenresTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.bookGenres,
+      getReferencedColumn: (t) => t.genreId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BookGenresTableAnnotationComposer(
+            $db: $db,
+            $table: $db.bookGenres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GenresTableTableManager
+    extends
+        RootTableManager<
+          _$InktomeDatabase,
+          $GenresTable,
+          Genre,
+          $$GenresTableFilterComposer,
+          $$GenresTableOrderingComposer,
+          $$GenresTableAnnotationComposer,
+          $$GenresTableCreateCompanionBuilder,
+          $$GenresTableUpdateCompanionBuilder,
+          (Genre, $$GenresTableReferences),
+          Genre,
+          PrefetchHooks Function({bool bookGenresRefs})
+        > {
+  $$GenresTableTableManager(_$InktomeDatabase db, $GenresTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GenresTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GenresTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GenresTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+              }) => GenresCompanion(id: id, name: name),
+          createCompanionCallback:
+              ({Value<int> id = const Value.absent(), required String name}) =>
+                  GenresCompanion.insert(id: id, name: name),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$GenresTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback: ({bookGenresRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (bookGenresRefs) db.bookGenres],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (bookGenresRefs)
+                    await $_getPrefetchedData<Genre, $GenresTable, BookGenre>(
+                      currentTable: table,
+                      referencedTable: $$GenresTableReferences
+                          ._bookGenresRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$GenresTableReferences(db, table, p0).bookGenresRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.genreId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GenresTableProcessedTableManager =
+    ProcessedTableManager<
+      _$InktomeDatabase,
+      $GenresTable,
+      Genre,
+      $$GenresTableFilterComposer,
+      $$GenresTableOrderingComposer,
+      $$GenresTableAnnotationComposer,
+      $$GenresTableCreateCompanionBuilder,
+      $$GenresTableUpdateCompanionBuilder,
+      (Genre, $$GenresTableReferences),
+      Genre,
+      PrefetchHooks Function({bool bookGenresRefs})
+    >;
+typedef $$BookGenresTableCreateCompanionBuilder =
+    BookGenresCompanion Function({
+      required int bookId,
+      required int genreId,
+      Value<int> rowid,
+    });
+typedef $$BookGenresTableUpdateCompanionBuilder =
+    BookGenresCompanion Function({
+      Value<int> bookId,
+      Value<int> genreId,
+      Value<int> rowid,
+    });
+
+final class $$BookGenresTableReferences
+    extends BaseReferences<_$InktomeDatabase, $BookGenresTable, BookGenre> {
+  $$BookGenresTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $BooksTable _bookIdTable(_$InktomeDatabase db) => db.books.createAlias(
+    $_aliasNameGenerator(db.bookGenres.bookId, db.books.id),
+  );
+
+  $$BooksTableProcessedTableManager get bookId {
+    final $_column = $_itemColumn<int>('book_id')!;
+
+    final manager = $$BooksTableTableManager(
+      $_db,
+      $_db.books,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_bookIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $GenresTable _genreIdTable(_$InktomeDatabase db) => db.genres
+      .createAlias($_aliasNameGenerator(db.bookGenres.genreId, db.genres.id));
+
+  $$GenresTableProcessedTableManager get genreId {
+    final $_column = $_itemColumn<int>('genre_id')!;
+
+    final manager = $$GenresTableTableManager(
+      $_db,
+      $_db.genres,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_genreIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$BookGenresTableFilterComposer
+    extends Composer<_$InktomeDatabase, $BookGenresTable> {
+  $$BookGenresTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BooksTableFilterComposer get bookId {
+    final $$BooksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableFilterComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GenresTableFilterComposer get genreId {
+    final $$GenresTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genreId,
+      referencedTable: $db.genres,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenresTableFilterComposer(
+            $db: $db,
+            $table: $db.genres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BookGenresTableOrderingComposer
+    extends Composer<_$InktomeDatabase, $BookGenresTable> {
+  $$BookGenresTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BooksTableOrderingComposer get bookId {
+    final $$BooksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableOrderingComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GenresTableOrderingComposer get genreId {
+    final $$GenresTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genreId,
+      referencedTable: $db.genres,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenresTableOrderingComposer(
+            $db: $db,
+            $table: $db.genres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BookGenresTableAnnotationComposer
+    extends Composer<_$InktomeDatabase, $BookGenresTable> {
+  $$BookGenresTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BooksTableAnnotationComposer get bookId {
+    final $$BooksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GenresTableAnnotationComposer get genreId {
+    final $$GenresTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genreId,
+      referencedTable: $db.genres,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenresTableAnnotationComposer(
+            $db: $db,
+            $table: $db.genres,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BookGenresTableTableManager
+    extends
+        RootTableManager<
+          _$InktomeDatabase,
+          $BookGenresTable,
+          BookGenre,
+          $$BookGenresTableFilterComposer,
+          $$BookGenresTableOrderingComposer,
+          $$BookGenresTableAnnotationComposer,
+          $$BookGenresTableCreateCompanionBuilder,
+          $$BookGenresTableUpdateCompanionBuilder,
+          (BookGenre, $$BookGenresTableReferences),
+          BookGenre,
+          PrefetchHooks Function({bool bookId, bool genreId})
+        > {
+  $$BookGenresTableTableManager(_$InktomeDatabase db, $BookGenresTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BookGenresTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BookGenresTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BookGenresTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> bookId = const Value.absent(),
+                Value<int> genreId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BookGenresCompanion(
+                bookId: bookId,
+                genreId: genreId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int bookId,
+                required int genreId,
+                Value<int> rowid = const Value.absent(),
+              }) => BookGenresCompanion.insert(
+                bookId: bookId,
+                genreId: genreId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$BookGenresTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({bookId = false, genreId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (bookId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.bookId,
+                                referencedTable: $$BookGenresTableReferences
+                                    ._bookIdTable(db),
+                                referencedColumn: $$BookGenresTableReferences
+                                    ._bookIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (genreId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.genreId,
+                                referencedTable: $$BookGenresTableReferences
+                                    ._genreIdTable(db),
+                                referencedColumn: $$BookGenresTableReferences
+                                    ._genreIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$BookGenresTableProcessedTableManager =
+    ProcessedTableManager<
+      _$InktomeDatabase,
+      $BookGenresTable,
+      BookGenre,
+      $$BookGenresTableFilterComposer,
+      $$BookGenresTableOrderingComposer,
+      $$BookGenresTableAnnotationComposer,
+      $$BookGenresTableCreateCompanionBuilder,
+      $$BookGenresTableUpdateCompanionBuilder,
+      (BookGenre, $$BookGenresTableReferences),
+      BookGenre,
+      PrefetchHooks Function({bool bookId, bool genreId})
+    >;
 
 class $InktomeDatabaseManager {
   final _$InktomeDatabase _db;
@@ -3754,4 +5140,8 @@ class $InktomeDatabaseManager {
   $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
   $$BookTagsTableTableManager get bookTags =>
       $$BookTagsTableTableManager(_db, _db.bookTags);
+  $$GenresTableTableManager get genres =>
+      $$GenresTableTableManager(_db, _db.genres);
+  $$BookGenresTableTableManager get bookGenres =>
+      $$BookGenresTableTableManager(_db, _db.bookGenres);
 }

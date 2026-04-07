@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:inktome/core/data/database/converters/book_status_converter.dart';
 import 'package:inktome/core/data/database/converters/owned_format_converter.dart';
+import 'package:inktome/core/data/database/converters/read_format_converter.dart';
 
 // MARK: BOOKS TABLE
 //
@@ -16,13 +17,20 @@ import 'package:inktome/core/data/database/converters/owned_format_converter.dar
 //     ("2003", "2003-08", "2003-08-26") and we don't want to discard that.
 //   - rating is nullable — unrated books is a valid state.
 //   - api_rating is the community/source rating; rating is the user's own.
-//   - source tracks where metadata came from. Useful for debugging and
-//     for handling data quality differently per provider.
+//   - source tracks where metadata came from.
 //   - custom_data is a JSON blob escape hatch for arbitrary future fields.
-//     Parse and serialise at the repository layer, never in UI code.
+//
+// SCHEMA v2 ADDITIONS:
+//   - is_borrowed / borrow_source / borrow_returned_at — borrow tracking.
+//     borrow_source is free text ("Sarah", "Hendon Library") — not a FK
+//     because these are informal references, not database entities.
+//   - read_format — MVP placeholder for the format the user is reading in.
+//     Moves to ReadInstances long-term; kept here until that table is active.
+//     Separate from owned_format: you can own a physical copy while
+//     listening to the library audiobook.
 
 class Books extends Table {
-  // Primary key — Drift auto-increments by default on IntColumn primaryKey.
+  // Primary key
   IntColumn get id => integer().autoIncrement()();
 
   // Core identity
@@ -31,7 +39,7 @@ class Books extends Table {
   TextColumn get author => text().nullable()();
   TextColumn get isbn => text().nullable()();
 
-  // Metadata from API or manual entry
+  // Metadata
   TextColumn get description => text().nullable()();
   TextColumn get publishedDate => text().nullable()();
   IntColumn get pageCount => integer().nullable()();
@@ -39,25 +47,20 @@ class Books extends Table {
   TextColumn get publisher => text().nullable()();
   RealColumn get apiRating => real().nullable()();
 
-  // Cover image — two columns, two jobs (see note above)
+  // Cover
   TextColumn get coverLocalPath => text().nullable()();
   TextColumn get coverSourceUrl => text().nullable()();
 
   // Reading state
-  // Valid values: 'to_read' | 'reading' | 'finished' | 'dnf'
-  // Stored as text rather than an enum so the DB doesn't break
-  // if we add new statuses without a migration.
   TextColumn get cachedStatus => text()
       .withDefault(const Constant('to_read'))
       .map(const BookStatusConverter())();
 
-  // Ratings — both nullable; unrated is a valid state for each.
-  // REAL in SQLite handles decimals (4.25, 4.75) with no issues.
+  // Ratings
   RealColumn get rating => real().nullable()();
   IntColumn get spiceRating => integer().nullable()();
 
-  // Timestamps — unix seconds.
-  // date_added is the only required one; others depend on reading state.
+  // Timestamps (unix seconds)
   IntColumn get dateAdded => integer()();
   IntColumn get dateStarted => integer().nullable()();
   IntColumn get dateFinished => integer().nullable()();
@@ -67,15 +70,26 @@ class Books extends Table {
   TextColumn get ownedFormat =>
       text().nullable().map(const OwnedFormatConverter())();
 
-  // NFC — nullable, unique. One sticker per book.
-  // We only store the ID written to the sticker, not any raw tag data.
+  // SCHEMA v2: Read format (MVP placeholder — migrates to ReadInstances later)
+  // The format the user is currently reading this book in.
+  // Independent of ownedFormat: owning a physical copy doesn't mean
+  // you're not listening to the audiobook on your commute.
+  TextColumn get readFormat =>
+      text().nullable().map(const ReadFormatConverter())();
+
+  // SCHEMA v2: Borrow tracking
+  // is_borrowed is the primary flag. borrow_source is who/where it came from.
+  // borrow_returned_at is null while the book is still out on loan.
+  BoolColumn get isBorrowed => boolean().withDefault(const Constant(false))();
+  TextColumn get borrowSource => text().nullable()();
+  IntColumn get borrowReturnedAt => integer().nullable()();
+
+  // NFC
   TextColumn get nfcTagId => text().nullable().unique()();
 
-  // Where the metadata came from.
-  // Valid values: 'google_books' | 'open_library' | 'manual'
+  // Source
   TextColumn get source => text().withDefault(const Constant('manual'))();
 
-  // Escape hatch for arbitrary future fields.
-  // Stored as a JSON string; parse at repository layer, never in UI.
+  // Escape hatch
   TextColumn get customData => text().nullable()();
 }
