@@ -26,7 +26,7 @@ class InktomeTextStyles {
   static TextStyle get displayLarge => _displayLarge;
   static final TextStyle _displayLarge = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.displayLarge,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: -1.5,
     height: 0.95,
   );
@@ -35,7 +35,7 @@ class InktomeTextStyles {
   static TextStyle get display => _display;
   static final TextStyle _display = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.display,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: -1.0,
     height: 1.0,
   );
@@ -53,7 +53,7 @@ class InktomeTextStyles {
   static TextStyle get headingLarge => _headingLarge;
   static final TextStyle _headingLarge = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.headingLarge,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: -0.5,
     height: 1.05,
   );
@@ -62,7 +62,7 @@ class InktomeTextStyles {
   static TextStyle get headingMedium => _headingMedium;
   static final TextStyle _headingMedium = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.headingMedium,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: -0.3,
     height: 1.15,
   );
@@ -71,7 +71,7 @@ class InktomeTextStyles {
   static TextStyle get headingSmall => _headingSmall;
   static final TextStyle _headingSmall = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.headingSmall,
-    fontWeight: FontWeight.w300,
+    // fontWeight: FontWeight.w300,
     letterSpacing: -0.2,
     height: 1.2,
   );
@@ -89,7 +89,7 @@ class InktomeTextStyles {
   static TextStyle get bodyLarge => _bodyLarge;
   static final TextStyle _bodyLarge = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.bodyLarge,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: 0.0,
     height: 1.5,
   );
@@ -98,7 +98,7 @@ class InktomeTextStyles {
   static TextStyle get body => _body;
   static final TextStyle _body = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.body,
-    fontWeight: FontWeight.w100,
+    // fontWeight: FontWeight.w100,
     letterSpacing: 0.1,
     height: 1.65,
   );
@@ -107,7 +107,7 @@ class InktomeTextStyles {
   static TextStyle get bodySmall => _bodySmall;
   static final TextStyle _bodySmall = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.bodySmall,
-    fontWeight: FontWeight.w100,
+    // fontWeight: FontWeight.w100,
     letterSpacing: 0.1,
     height: 1.55,
   );
@@ -125,7 +125,7 @@ class InktomeTextStyles {
   static TextStyle get labelLarge => _labelLarge;
   static final TextStyle _labelLarge = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.labelLarge,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
     height: 1.4,
   );
@@ -134,7 +134,7 @@ class InktomeTextStyles {
   static TextStyle get label => _label;
   static final TextStyle _label = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.label,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
     height: 1.4,
   );
@@ -144,7 +144,7 @@ class InktomeTextStyles {
   static TextStyle get labelSmall => _labelSmall;
   static final TextStyle _labelSmall = GoogleFonts.fraunces(
     fontSize: InktomeSpacing.labelSmall,
-    fontWeight: FontWeight.w400,
+    // fontWeight: FontWeight.w400,
     letterSpacing: 0.3,
     height: 1.4,
   );
@@ -165,7 +165,7 @@ class InktomeTextStyles {
   static TextStyle get button => _button;
   static final TextStyle _button = GoogleFonts.londrinaSolid(
     fontSize: InktomeSpacing.buttonText,
-    fontWeight: FontWeight.w100,
+    // fontWeight: FontWeight.w100,
     letterSpacing: 0.8,
     height: 1.0,
     color: InktomeColors.white,

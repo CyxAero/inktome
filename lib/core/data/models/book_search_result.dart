@@ -3,13 +3,15 @@
 // Represents a single result from the Google Books API.
 // This is a transient view model — it never touches the database.
 // When the user confirms adding a book, BookRepository.addBook()
-// receives a BooksCompanion built from one of these.
+// receives a BooksCompanion built from a BookDetails derived from this.
+
 class BookSearchResult {
   const BookSearchResult({
     required this.googleBooksId,
     required this.title,
     this.subtitle,
     this.authors = const [],
+    this.genres = const [],
     this.description,
     this.publishedDate,
     this.pageCount,
@@ -24,22 +26,25 @@ class BookSearchResult {
   final String title;
   final String? subtitle;
   final List<String> authors;
+
+  // Genre names from volumeInfo.categories.
+  // The API returns these as broad strings like "Fiction / Science Fiction"
+  // or just "Science Fiction". We store them as-is and let the user clean
+  // up or rename genres if they want to.
+  final List<String> genres;
+
   final String? description;
   final String? publishedDate;
   final int? pageCount;
   final String? language;
   final String? publisher;
-  final String? isbn; // ISBN-13 preferred, ISBN-10 fallback
-  final String?
-  coverUrl; // cleaned https URL, ready to pass to CachedNetworkImage
+  final String? isbn;
+  final String? coverUrl;
   final double? apiRating;
 
-  // Convenience — UI shows authors as a single string.
   String get authorDisplay =>
-      authors.isEmpty ? 'Unknown Author' : authors.join(', ');
+      authors.isEmpty ? 'Unknown author' : authors.join(', ');
 
-  // Converts this result into a map suitable for BooksCompanion.
-  // Called when the user confirms adding this book to their library.
   Map<String, dynamic> toBookFields() => {
     'title': title,
     'subtitle': subtitle,
@@ -55,8 +60,6 @@ class BookSearchResult {
     'source': 'google_books',
   };
 
-  // Parses one item from the Google Books API response.
-  // Returns null if the item is malformed or missing a title.
   static BookSearchResult? fromJson(Map<String, dynamic> json) {
     final info = json['volumeInfo'] as Map<String, dynamic>?;
     if (info == null) return null;
@@ -73,6 +76,7 @@ class BookSearchResult {
               ?.map((a) => a as String)
               .toList() ??
           [],
+      genres: _extractGenres(info),
       description: info['description'] as String?,
       publishedDate: info['publishedDate'] as String?,
       pageCount: info['pageCount'] as int?,
@@ -84,7 +88,21 @@ class BookSearchResult {
     );
   }
 
-  // Prefers ISBN-13 over ISBN-10.
+  // Parses volumeInfo.categories into a flat, deduplicated list.
+  //
+  // The API sometimes returns compound strings like "Fiction / Science Fiction".
+  // We split on " / " so "Science Fiction" and "Fiction" become separate genres
+  // rather than one unwieldy label. Duplicates are removed before returning.
+  static List<String> _extractGenres(Map<String, dynamic> info) {
+    final raw = (info['categories'] as List<dynamic>?) ?? [];
+    return raw
+        .expand((c) => (c as String).split(' / '))
+        .map((g) => g.trim())
+        .where((g) => g.isNotEmpty)
+        .toSet() // deduplicate
+        .toList();
+  }
+
   static String? _extractIsbn(Map<String, dynamic> info) {
     final identifiers = (info['industryIdentifiers'] as List<dynamic>?) ?? [];
     String? isbn10;
@@ -96,18 +114,16 @@ class BookSearchResult {
     return isbn10;
   }
 
-  // Enforces https, removes curl effect, upgrades zoom for a usable image.
   static String? _cleanCoverUrl(Map<String, dynamic> info) {
     final links = info['imageLinks'] as Map<String, dynamic>?;
     if (links == null) return null;
 
-    // Prefer 'thumbnail' — 'smallThumbnail' is often too small to display.
     final raw = (links['thumbnail'] ?? links['smallThumbnail']) as String?;
     if (raw == null) return null;
 
     return raw
         .replaceFirst('http://', 'https://')
-        .replaceAll('&edge=curl', '') // removes distracting page-curl rendering
-        .replaceAll('zoom=1', 'zoom=0'); // zoom=0 gives a larger image
+        .replaceAll('&edge=curl', '')
+        .replaceAll('zoom=1', 'zoom=0');
   }
 }

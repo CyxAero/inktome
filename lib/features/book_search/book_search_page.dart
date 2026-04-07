@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:go_router/go_router.dart';
+import 'package:inktome/core/data/models/book_details.dart';
 import 'package:inktome/core/data/models/book_search_result.dart';
 import 'package:inktome/core/data/services/book_search_service.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
 import 'package:inktome/core/theme/inktome_typography.dart';
 import 'package:inktome/core/widgets/app_background.dart';
+import 'package:inktome/core/widgets/book_card.dart';
 import 'package:inktome/core/widgets/custom_dashed_border.dart';
 import 'package:inktome/core/widgets/search_field.dart';
 import 'package:provider/provider.dart';
@@ -94,11 +97,15 @@ class _BookSearchPageState extends State<BookSearchPage> {
         ? keyboardHeight + InktomeSpacing.md
         : InktomeSpacing.lg * 2;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.transparent,
-      body: AppBackground(
-        child: Stack(
+    return AppBackground(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('search results'),
+          automaticallyImplyLeading: false,
+        ),
+        body: Stack(
           children: [
             // LAYER 1: Body — idle / loading / results / empty.
             // Leaves room at the bottom for the search bar.
@@ -192,7 +199,7 @@ class _SearchBody extends StatelessWidget {
         ),
         _SearchState.loading => const _LoadingState(key: ValueKey('loading')),
         _SearchState.results => _ResultsGrid(
-          key: ValueKey('results'),
+          key: const ValueKey('results'),
           results: results,
         ),
         _SearchState.empty => _EmptyState(
@@ -201,7 +208,7 @@ class _SearchBody extends StatelessWidget {
         ),
         _SearchState.error => _ErrorState(
           key: const ValueKey('error'),
-          message: errorMessage, // pass from parent
+          message: errorMessage,
           labelColor: labelColor,
         ),
       },
@@ -240,17 +247,55 @@ class _LoadingState extends StatelessWidget {
   }
 }
 
+// MARK: RESULTS GRID
+//
+// 2-column cover grid matching the library mockup.
+// Each card is wrapped in a GestureDetector that pushes to the book
+// detail preview route, passing the BookDetails via GoRouter's extra param.
+//
+// Rotation seed is the googleBooksId hashCode — stable across rebuilds
+// so the same book always tilts the same way.
 class _ResultsGrid extends StatelessWidget {
   const _ResultsGrid({super.key, required this.results});
+
   final List<BookSearchResult> results;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: build cover grid — next step.
-    return ListView.builder(
-      padding: const EdgeInsets.all(InktomeSpacing.pagePadding),
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(
+        InktomeSpacing.pagePadding,
+        InktomeSpacing.md,
+        InktomeSpacing.pagePadding,
+        // Extra bottom padding so the last row isn't hidden under the search bar.
+        InktomeSpacing.navBarPillHeight + InktomeSpacing.xxxl,
+      ),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: InktomeSpacing.md,
+        mainAxisSpacing: InktomeSpacing.lg,
+        // 2:3 cover ratio with a little extra vertical room for the rotation
+        // to breathe without clipping the corners of neighbouring cards.
+        childAspectRatio: 0.62,
+      ),
       itemCount: results.length,
-      itemBuilder: (context, index) => Text(results[index].title),
+      itemBuilder: (context, index) {
+        final result = results[index];
+        return GestureDetector(
+          onTap: () => context.push(
+            '/book/preview',
+            extra: BookDetails.fromSearchResult(result),
+          ),
+          child: BookCard(
+            title: result.title,
+            author: result.authorDisplay,
+            coverUrl: result.coverUrl,
+            rotationSeed: result.googleBooksId.hashCode,
+            // Tag matches _CoverHero in NewBookDetail for the Hero flight.
+            heroTag: result.googleBooksId,
+          ),
+        );
+      },
     );
   }
 }

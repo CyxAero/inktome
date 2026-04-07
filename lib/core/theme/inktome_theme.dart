@@ -20,7 +20,6 @@
 /// ```
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:inktome/core/theme/inktome_color_schemes.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
@@ -91,8 +90,6 @@ ThemeData inktomeLightTheme() {
     appBarTheme: AppBarTheme(
       // Transparent background so the AppBar blends into whatever screen background sits behind it.
       backgroundColor: Colors.transparent,
-      // foregroundColor covers the back-chevron, action icons, and any Text widget inside the AppBar that has no explicit style.
-      foregroundColor: InktomeColors.black,
       elevation: 0,
       // Material 3 by default adds a surface tint and shadow when content scrolls under the app bar. Setting this to 0 disables that behaviour, keeping the bar visually flat and part of the same surface as the scaffold.
       scrolledUnderElevation: 0,
@@ -101,10 +98,10 @@ ThemeData inktomeLightTheme() {
       titleTextStyle: InktomeTextStyles.headingLargeWithColor(
         InktomeColors.black,
       ),
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark, // dark icons on light bg
-      ),
+      // systemOverlayStyle: const SystemUiOverlayStyle(
+      //   statusBarColor: Colors.transparent,
+      //   statusBarIconBrightness: Brightness.dark, // dark icons on light bg
+      // ),
     ),
 
     // ? MARK: Filled button
@@ -328,17 +325,16 @@ ThemeData inktomeDarkTheme() {
     // statusBarIconBrightness flips to Brightness.light — renders white status bar icons, legible against dark scaffold.
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
-      foregroundColor: InktomeColors.white,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
       titleTextStyle: InktomeTextStyles.headingLargeWithColor(
         InktomeColors.white,
       ),
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light, // white icons on dark bg
-      ),
+      // systemOverlayStyle: const SystemUiOverlayStyle(
+      //   statusBarColor: Colors.transparent,
+      //   statusBarIconBrightness: Brightness.light, // white icons on dark bg
+      // ),
     ),
 
     // ? MARK: Filled button (dark)

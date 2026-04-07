@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inktome/core/data/database/inktome_database.dart';
 import 'package:inktome/core/data/repositories/book_repository.dart';
 import 'package:inktome/core/data/services/book_search_service.dart';
+import 'package:inktome/core/data/services/cover_service.dart';
 import 'package:inktome/core/theme/inktome_theme.dart';
 import 'package:inktome/core/theme/theme_notifier.dart';
 import 'package:inktome/navigation/app_router.dart';
@@ -37,6 +38,8 @@ void main() async {
         ProxyProvider<InktomeDatabase, BookRepository>(
           update: (_, db, _) => BookRepository(db),
         ),
+        // CoverService downloads book covers
+        Provider<CoverService>(create: (_) => CoverService()),
       ],
       child: const MainApp(),
     ),
