@@ -230,7 +230,7 @@ class _CoverHero extends StatelessWidget {
     final coverPath = details.resolvedCoverPath;
     final heroTag = details.isInLibrary
         ? 'book-${details.libraryId}'
-        : details.coverSourceUrl ?? details.title;
+        : details.googleBooksId ?? details.coverSourceUrl ?? details.title;
 
     return Padding(
       padding: const EdgeInsets.only(

@@ -177,7 +177,7 @@ class _HeroBookCover extends StatelessWidget {
     final coverPath = bookDetails.resolvedCoverPath;
     final heroTag = bookDetails.isInLibrary
         ? 'book-${bookDetails.libraryId}'
-        : bookDetails.coverSourceUrl ?? bookDetails.title;
+        : bookDetails.googleBooksId ?? bookDetails.coverSourceUrl ?? bookDetails.title;
 
     final borderColor = isDark ? InktomeColors.white : InktomeColors.black;
 

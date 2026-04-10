@@ -43,8 +43,8 @@ class BookCard extends StatelessWidget {
   final String heroTag;
 
   static const double _maxTiltRad = 4 * math.pi / 180;
-  static const double _coverRadius = 16.0;
-  static const double _borderRadius = 18.0;
+  static const double _coverRadius = 20;
+  static const double _borderRadius = 24;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +70,10 @@ class BookCard extends StatelessWidget {
           color: borderColor,
           radius: _borderRadius,
           strokeWidth: 1.5,
-          dashLength: 8,
+          dashLength: 12,
           dashGap: 5,
           child: Padding(
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.all(4),
             child: SquircleClip(
               radius: _coverRadius,
               child: _CoverContent(
@@ -90,7 +90,11 @@ class BookCard extends StatelessWidget {
   }
 
   double _stableTilt(int seed) {
-    final normalised = (seed.abs() % 1000) / 1000.0;
+    // final normalised = (seed.abs() % 1000) / 1000.0;
+
+    // Use a better hash function to distribute values more evenly
+    final hash = seed.hashCode;
+    final normalised = (hash.abs() % 1000) / 1000.0;
     return (normalised - 0.5) * 2 * _maxTiltRad;
   }
 }
@@ -223,7 +227,9 @@ class _TextPlaceholder extends StatelessWidget {
             if (title.isNotEmpty)
               Text(
                 title,
-                style: InktomeTextStyles.headingSmall.copyWith(color: titleColor),
+                style: InktomeTextStyles.headingSmall.copyWith(
+                  color: titleColor,
+                ),
                 textAlign: TextAlign.center,
                 maxLines: 5,
                 overflow: TextOverflow.ellipsis,

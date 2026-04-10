@@ -29,6 +29,7 @@ class BookDetails {
   const BookDetails({
     this.libraryId,
     required this.title,
+    this.googleBooksId,
     this.subtitle,
     this.author,
     this.isbn,
@@ -58,6 +59,7 @@ class BookDetails {
   });
 
   final int? libraryId;
+  final String? googleBooksId;
 
   final String title;
   final String? subtitle;
@@ -125,6 +127,7 @@ class BookDetails {
     List<String>? genres,
   }) {
     return BookDetails(
+      googleBooksId: result.googleBooksId,
       title: result.title,
       subtitle: result.subtitle,
       author: result.authorDisplay,
