@@ -36,7 +36,7 @@ class NewBookDetail extends StatelessWidget {
 // No tabs, no reading state, no edit controls.
 // ─────────────────────────────────────────────────────────────────────────────
 class _SearchBookDetailPage extends StatelessWidget {
-  const _SearchBookDetailPage({super.key, required this.details});
+  const _SearchBookDetailPage({required this.details});
 
   final BookDetails details;
 
@@ -98,7 +98,7 @@ class _SearchBookDetailPage extends StatelessWidget {
 // Has tabs for Overview / Details / Sessions.
 // ─────────────────────────────────────────────────────────────────────────────
 class _LibraryBookDetailPage extends StatefulWidget {
-  const _LibraryBookDetailPage({super.key, required this.details});
+  const _LibraryBookDetailPage({required this.details});
 
   final BookDetails details;
 
@@ -304,7 +304,9 @@ class _DetailCoverPlaceholder extends StatelessWidget {
           children: [
             Text(
               title,
-              style: InktomeTextStyles.headingMediumWithColor(titleColor),
+              style: InktomeTextStyles.headingMedium.copyWith(
+                color: titleColor,
+              ),
               textAlign: TextAlign.center,
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
@@ -312,7 +314,7 @@ class _DetailCoverPlaceholder extends StatelessWidget {
             const SizedBox(height: InktomeSpacing.sm),
             Text(
               author,
-              style: InktomeTextStyles.bodySmallWithColor(authorColor),
+              style: InktomeTextStyles.bodySmall.copyWith(color: authorColor),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -350,21 +352,16 @@ class _TitleBlock extends StatelessWidget {
         children: [
           Text(
             details.title,
-            style: InktomeTextStyles.headingMediumWithColor(textColor),
+            style: InktomeTextStyles.headingMedium.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w300,
+            ),
             textAlign: TextAlign.center,
           ),
-          if (details.subtitle != null) ...[
-            const SizedBox(height: InktomeSpacing.xs),
-            Text(
-              details.subtitle!,
-              style: InktomeTextStyles.bodyWithColor(mutedColor),
-              textAlign: TextAlign.center,
-            ),
-          ],
           const SizedBox(height: InktomeSpacing.xs),
           Text(
             details.authorDisplay,
-            style: InktomeTextStyles.bodySmallWithColor(mutedColor),
+            style: InktomeTextStyles.bodySmall.copyWith(color: mutedColor),
             textAlign: TextAlign.center,
           ),
 
@@ -453,9 +450,21 @@ class _StatItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: InktomeTextStyles.labelWithColor(mutedColor)),
+          Text(
+            label,
+            style: InktomeTextStyles.label.copyWith(
+              color: mutedColor,
+              fontSize: 16,
+            ),
+          ),
           const SizedBox(height: InktomeSpacing.xs),
-          Text(value, style: InktomeTextStyles.bodyWithColor(textColor)),
+          Text(
+            value,
+            style: InktomeTextStyles.body.copyWith(
+              color: textColor,
+              fontSize: 22,
+            ),
+          ),
         ],
       ),
     );
@@ -500,12 +509,12 @@ class _MetadataSection extends StatelessWidget {
           if (details.description != null) ...[
             Text(
               'Book Description',
-              style: InktomeTextStyles.headingSmallWithColor(textColor),
+              style: InktomeTextStyles.headingSmall.copyWith(color: textColor),
             ),
             const SizedBox(height: InktomeSpacing.sm),
             Text(
               details.description!,
-              style: InktomeTextStyles.bodyWithColor(mutedColor),
+              style: InktomeTextStyles.body.copyWith(color: mutedColor),
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
             ),
@@ -567,12 +576,12 @@ class _MetaGrid extends StatelessWidget {
             children: [
               Text(
                 entry.label,
-                style: InktomeTextStyles.labelWithColor(mutedColor),
+                style: InktomeTextStyles.label.copyWith(color: mutedColor),
               ),
               const SizedBox(height: InktomeSpacing.xs),
               Text(
                 entry.value,
-                style: InktomeTextStyles.bodySmallWithColor(textColor),
+                style: InktomeTextStyles.bodySmall.copyWith(color: textColor),
               ),
             ],
           ),
@@ -720,7 +729,7 @@ class _SessionsTab extends StatelessWidget {
     return Center(
       child: Text(
         'no sessions yet',
-        style: InktomeTextStyles.headingSmallWithColor(mutedColor),
+        style: InktomeTextStyles.headingSmall.copyWith(color: mutedColor),
       ),
     );
   }
@@ -796,7 +805,9 @@ class _AddToLibraryButtonState extends State<_AddToLibraryButton> {
                       )
                     : Text(
                         'Add to library',
-                        style: InktomeTextStyles.buttonWithColor(textColor),
+                        style: InktomeTextStyles.button.copyWith(
+                          color: textColor,
+                        ),
                       ),
               ),
             ),

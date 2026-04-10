@@ -52,8 +52,8 @@ class SearchField extends StatelessWidget {
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.search,
               onSubmitted: onSubmit,
-              style: InktomeTextStyles.buttonWithColor(
-                textColor,
+              style: InktomeTextStyles.button.copyWith(
+                color: textColor,
               ).copyWith(fontSize: 18),
               decoration: InputDecoration(
                 fillColor: Colors.transparent,
@@ -67,8 +67,8 @@ class SearchField extends StatelessWidget {
                   vertical: InktomeSpacing.md,
                 ),
                 hintText: 'title, author or isbn',
-                hintStyle: InktomeTextStyles.buttonWithColor(
-                  labelColor,
+                hintStyle: InktomeTextStyles.button.copyWith(
+                  color: labelColor,
                 ).copyWith(fontSize: 18),
                 suffixIcon: GestureDetector(
                   onTap: () => onSubmit(controller.text),

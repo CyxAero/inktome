@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
 // Friendly prompt to add their first book — tapping the message
 // triggers the same add-book overlay as the nav bar + button.
 class _EmptyHome extends StatelessWidget {
-  const _EmptyHome({super.key});
+  const _EmptyHome();
 
   @override
   Widget build(BuildContext context) {
@@ -85,11 +85,11 @@ class _EmptyHome extends StatelessWidget {
             // Greeting
             Text(
               'Hello,',
-              style: InktomeTextStyles.headingLargeWithColor(textColor),
+              style: InktomeTextStyles.headingLarge.copyWith(color: textColor),
             ),
             Text(
               'Reader!',
-              style: InktomeTextStyles.displayWithColor(textColor),
+              style: InktomeTextStyles.display.copyWith(color: textColor),
             ),
 
             const Spacer(),
@@ -131,7 +131,9 @@ class _EmptyHome extends StatelessWidget {
 
                   Text(
                     'add your first book',
-                    style: InktomeTextStyles.headingSmallWithColor(mutedColor),
+                    style: InktomeTextStyles.headingSmall.copyWith(
+                      color: mutedColor,
+                    ),
                   ),
                 ],
               ),
@@ -156,7 +158,7 @@ class _EmptyHome extends StatelessWidget {
 // none are actively being read). Shows a progress indicator if page
 // count is known.
 class _FilledHome extends StatelessWidget {
-  const _FilledHome({super.key, required this.books});
+  const _FilledHome({required this.books});
 
   final List<Book> books;
 
@@ -184,22 +186,34 @@ class _FilledHome extends StatelessWidget {
             // Greeting
             Text(
               'Hello,',
-              style: InktomeTextStyles.headingLargeWithColor(textColor),
+              style: InktomeTextStyles.headingLarge.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w900,
+                height: 0.6,
+              ),
             ),
             Text(
               'Reader!',
-              style: InktomeTextStyles.displayWithColor(textColor),
+              style: InktomeTextStyles.body.copyWith(
+                color: textColor,
+                height: 1.0,
+                fontSize: 52,
+              ),
             ),
 
             const SizedBox(height: InktomeSpacing.xxl),
 
             // Section label
-            Text(
-              'Currently Reading',
-              style: InktomeTextStyles.headingSmallWithColor(textColor),
+            Center(
+              child: Text(
+                'Currently Reading',
+                style: InktomeTextStyles.body.copyWith(
+                  fontSize: 32,
+                  height: 0.2,
+                  color: textColor,
+                ),
+              ),
             ),
-
-            const SizedBox(height: InktomeSpacing.md),
 
             // Currently reading card — taps through to the book detail page
             _CurrentlyReadingCard(book: currentBook, isDark: isDark),
@@ -224,11 +238,7 @@ class _FilledHome extends StatelessWidget {
 // The stacked-card shadow effect (second card peeking behind) is
 // achieved with two overlapping containers, not actual elevation.
 class _CurrentlyReadingCard extends StatelessWidget {
-  const _CurrentlyReadingCard({
-    super.key,
-    required this.book,
-    required this.isDark,
-  });
+  const _CurrentlyReadingCard({required this.book, required this.isDark});
 
   final Book book;
   final bool isDark;
@@ -290,9 +300,9 @@ class _CurrentlyReadingCard extends StatelessWidget {
                                   ),
                                   child: Text(
                                     book.title,
-                                    style:
-                                        InktomeTextStyles.headingSmallWithColor(
-                                          isDark
+                                    style: InktomeTextStyles.headingSmall
+                                        .copyWith(
+                                          color: isDark
                                               ? InktomeColors.white
                                               : InktomeColors.black,
                                         ),
@@ -350,7 +360,7 @@ class _ProgressBar extends StatelessWidget {
           Center(
             child: Text(
               '$percent%',
-              style: InktomeTextStyles.labelWithColor(labelColor),
+              style: InktomeTextStyles.label.copyWith(color: labelColor),
             ),
           ),
           const SizedBox(height: InktomeSpacing.xs),

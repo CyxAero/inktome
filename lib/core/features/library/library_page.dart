@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide_animated/flutter_lucide_animated.dart';
+import 'package:inktome/core/theme/inktome_colors.dart';
+import 'package:inktome/core/theme/inktome_typography.dart';
 import 'package:inktome/features/add_book/add_book_overlay.dart';
 import 'package:inktome/navigation/nav_bar_notifier.dart';
 import 'package:provider/provider.dart';
@@ -25,14 +27,23 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? InktomeColors.white : InktomeColors.black;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       // Prevents the keyboard from resizing this scaffold — the overlay
       // handles its own keyboard avoidance independently.
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('library')),
-      body: Center(child: Text('Library Page', style: textTheme.displayMedium)),
+      appBar: AppBar(
+        title: Text(
+          'library',
+          style: InktomeTextStyles.headingLarge.copyWith(color: textColor),
+        ),
+      ),
+      body: Center(
+        child: Text('Library Page', style: InktomeTextStyles.display),
+      ),
     );
   }
 }

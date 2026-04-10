@@ -145,9 +145,9 @@ class _StreamedBooksDetailPageState extends State<StreamedBooksDetailPage> {
                                     )
                                   : Text(
                                       'add book',
-                                      style: InktomeTextStyles.buttonWithColor(
-                                        textColor,
-                                      ).copyWith(fontWeight: FontWeight.w100),
+                                      style: InktomeTextStyles.button.copyWith(
+                                        color: textColor,
+                                      ),
                                     ),
                             ),
                           ),
@@ -256,7 +256,7 @@ class _EmptyBookCover extends StatelessWidget {
           children: [
             Text(
               title,
-              style: InktomeTextStyles.headingSmallWithColor(textColor),
+              style: InktomeTextStyles.headingSmall.copyWith(color: textColor),
               textAlign: TextAlign.center,
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
@@ -264,7 +264,7 @@ class _EmptyBookCover extends StatelessWidget {
             const SizedBox(height: InktomeSpacing.sm),
             Text(
               author,
-              style: InktomeTextStyles.bodySmallWithColor(textColor),
+              style: InktomeTextStyles.bodySmall.copyWith(color: textColor),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -294,16 +294,15 @@ class _BookInfo extends StatelessWidget {
         Text(
           bookDetails.title,
           textAlign: TextAlign.center,
-          style: InktomeTextStyles.headingMediumWithColor(
-            textColor,
-          ).copyWith(fontWeight: FontWeight.w100, fontSize: 28, height: 0.9),
+          style: InktomeTextStyles.headingSmall.copyWith(color: textColor),
         ),
         Text(
           bookDetails.author ?? 'Unknown author',
           textAlign: TextAlign.center,
-          style: InktomeTextStyles.bodyWithColor(
-            textColor,
-          ).copyWith(fontWeight: FontWeight.w100, height: 1),
+          style: InktomeTextStyles.bodyLarge.copyWith(
+            color: textColor,
+            height: 1,
+          ),
         ),
       ],
     );

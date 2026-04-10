@@ -54,35 +54,37 @@ ThemeData inktomeLightTheme() {
     // Never call InktomeTextStyles directly in a build method —
     // that bypasses this colour layer entirely.
     textTheme: TextTheme(
-      displayLarge: InktomeTextStyles.displayLargeWithColor(
-        InktomeColors.black,
+      displayLarge: InktomeTextStyles.displayLarge.copyWith(
+        color: InktomeColors.black,
       ),
-      displayMedium: InktomeTextStyles.displayWithColor(InktomeColors.black),
-      displaySmall: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.black,
+      displayMedium: InktomeTextStyles.display.copyWith(color: InktomeColors.black),
+      displaySmall: InktomeTextStyles.headingLarge.copyWith(
+        color: InktomeColors.black,
       ),
-      headlineLarge: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.black,
+      headlineLarge: InktomeTextStyles.headingLarge.copyWith(
+        color: InktomeColors.black,
       ),
-      headlineMedium: InktomeTextStyles.headingMediumWithColor(
-        InktomeColors.black,
+      headlineMedium: InktomeTextStyles.headingMedium.copyWith(
+        color: InktomeColors.black,
       ),
-      headlineSmall: InktomeTextStyles.headingSmallWithColor(
-        InktomeColors.black,
+      headlineSmall: InktomeTextStyles.headingSmall.copyWith(
+        color: InktomeColors.black,
       ),
-      titleLarge: InktomeTextStyles.headingSmallWithColor(InktomeColors.black),
-      titleMedium: InktomeTextStyles.bodyLargeWithColor(InktomeColors.black),
-      titleSmall: InktomeTextStyles.bodyWithColor(InktomeColors.black),
-      bodyLarge: InktomeTextStyles.bodyLargeWithColor(InktomeColors.black),
-      bodyMedium: InktomeTextStyles.bodyWithColor(InktomeColors.black),
-      bodySmall: InktomeTextStyles.bodySmallWithColor(InktomeColors.black),
+      titleLarge: InktomeTextStyles.headingSmall.copyWith(color: InktomeColors.black),
+      titleMedium: InktomeTextStyles.bodyLarge.copyWith(color: InktomeColors.black),
+      titleSmall: InktomeTextStyles.body.copyWith(color: InktomeColors.black),
+      bodyLarge: InktomeTextStyles.bodyLarge.copyWith(color: InktomeColors.black),
+      bodyMedium: InktomeTextStyles.body.copyWith(color: InktomeColors.black),
+      bodySmall: InktomeTextStyles.bodySmall.copyWith(color: InktomeColors.black),
       // Labels use greyMuted rather than black — they are UI chrome, not content. Chips, nav labels, captions should recede.
-      labelLarge: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.greyMuted,
+      labelLarge: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.greyMuted,
       ),
-      labelMedium: InktomeTextStyles.labelWithColor(InktomeColors.greyMuted),
-      labelSmall: InktomeTextStyles.labelSmallWithColor(
-        InktomeColors.greyMuted,
+      labelMedium: InktomeTextStyles.label.copyWith(
+        color: InktomeColors.greyMuted,
+      ),
+      labelSmall: InktomeTextStyles.labelSmall.copyWith(
+        color: InktomeColors.greyMuted,
       ),
     ),
 
@@ -95,9 +97,7 @@ ThemeData inktomeLightTheme() {
       scrolledUnderElevation: 0,
       centerTitle: false,
       // IMPORTANT: AppBar does NOT inherit from the TextTheme for its title. It reads this property directly. If this style has no colour, the title falls back to AppBar's internal DefaultTextStyle which is always white — regardless of theme. Always set an explicit colour here.
-      titleTextStyle: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.black,
-      ),
+      titleTextStyle: InktomeTextStyles.headingLarge,
       // systemOverlayStyle: const SystemUiOverlayStyle(
       //   statusBarColor: Colors.transparent,
       //   statusBarIconBrightness: Brightness.dark, // dark icons on light bg
@@ -111,7 +111,7 @@ ThemeData inktomeLightTheme() {
       style: FilledButton.styleFrom(
         backgroundColor: InktomeColors.black,
         foregroundColor: InktomeColors.white,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.white),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.white),
         // minimumSize: 48sp height satisfies Material touch target guidelines. Width is 0 so the button shrinks to fit its label.
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(
@@ -132,7 +132,7 @@ ThemeData inktomeLightTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: InktomeColors.black,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.black),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.black),
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.lg,
@@ -156,7 +156,7 @@ ThemeData inktomeLightTheme() {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: InktomeColors.black,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.black),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.black),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.sm,
           vertical: InktomeSpacing.xs,
@@ -205,12 +205,12 @@ ThemeData inktomeLightTheme() {
           width: 2.0,
         ),
       ),
-      hintStyle: InktomeTextStyles.bodyWithColor(InktomeColors.greyMuted),
-      labelStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.greyMuted,
+      hintStyle: InktomeTextStyles.body.copyWith(color: InktomeColors.greyMuted),
+      labelStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.greyMuted,
       ),
-      errorStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.brickEmber,
+      errorStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.brickEmber,
       ),
     ),
 
@@ -231,9 +231,9 @@ ThemeData inktomeLightTheme() {
     chipTheme: ChipThemeData(
       backgroundColor: Colors.transparent,
       selectedColor: InktomeColors.black,
-      labelStyle: InktomeTextStyles.labelLargeWithColor(InktomeColors.black),
-      secondaryLabelStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.white,
+      labelStyle: InktomeTextStyles.labelLarge.copyWith(color: InktomeColors.black),
+      secondaryLabelStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.white,
       ),
       side: const BorderSide(color: InktomeColors.greyMid, width: 1.0),
       padding: const EdgeInsets.symmetric(
@@ -290,34 +290,34 @@ ThemeData inktomeDarkTheme() {
     // Primary text flips to white. Labels use greyOnDark —
     // a lighter grey calibrated for legibility on dark backgrounds.
     textTheme: TextTheme(
-      displayLarge: InktomeTextStyles.displayLargeWithColor(
-        InktomeColors.white,
+      displayLarge: InktomeTextStyles.displayLarge.copyWith(
+        color: InktomeColors.white,
       ),
-      displayMedium: InktomeTextStyles.displayWithColor(InktomeColors.white),
-      displaySmall: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.white,
+      displayMedium: InktomeTextStyles.display.copyWith(color: InktomeColors.white),
+      displaySmall: InktomeTextStyles.headingLarge.copyWith(
+        color: InktomeColors.white,
       ),
-      headlineLarge: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.white,
+      headlineLarge: InktomeTextStyles.headingLarge.copyWith(
+        color: InktomeColors.white,
       ),
-      headlineMedium: InktomeTextStyles.headingMediumWithColor(
-        InktomeColors.white,
+      headlineMedium: InktomeTextStyles.headingMedium.copyWith(
+        color: InktomeColors.white,
       ),
-      headlineSmall: InktomeTextStyles.headingSmallWithColor(
-        InktomeColors.white,
+      headlineSmall: InktomeTextStyles.headingSmall.copyWith(
+        color: InktomeColors.white,
       ),
-      titleLarge: InktomeTextStyles.headingSmallWithColor(InktomeColors.white),
-      titleMedium: InktomeTextStyles.bodyLargeWithColor(InktomeColors.white),
-      titleSmall: InktomeTextStyles.bodyWithColor(InktomeColors.white),
-      bodyLarge: InktomeTextStyles.bodyLargeWithColor(InktomeColors.white),
-      bodyMedium: InktomeTextStyles.bodyWithColor(InktomeColors.white),
-      bodySmall: InktomeTextStyles.bodySmallWithColor(InktomeColors.white),
-      labelLarge: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.greyOnDark,
+      titleLarge: InktomeTextStyles.headingSmall.copyWith(color: InktomeColors.white),
+      titleMedium: InktomeTextStyles.bodyLarge.copyWith(color: InktomeColors.white),
+      titleSmall: InktomeTextStyles.body.copyWith(color: InktomeColors.white),
+      bodyLarge: InktomeTextStyles.bodyLarge.copyWith(color: InktomeColors.white),
+      bodyMedium: InktomeTextStyles.body.copyWith(color: InktomeColors.white),
+      bodySmall: InktomeTextStyles.bodySmall.copyWith(color: InktomeColors.white),
+      labelLarge: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.greyOnDark,
       ),
-      labelMedium: InktomeTextStyles.labelWithColor(InktomeColors.greyOnDark),
-      labelSmall: InktomeTextStyles.labelSmallWithColor(
-        InktomeColors.greyOnDark,
+      labelMedium: InktomeTextStyles.label.copyWith(color: InktomeColors.greyOnDark),
+      labelSmall: InktomeTextStyles.labelSmall.copyWith(
+        color: InktomeColors.greyOnDark,
       ),
     ),
 
@@ -328,8 +328,8 @@ ThemeData inktomeDarkTheme() {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      titleTextStyle: InktomeTextStyles.headingLargeWithColor(
-        InktomeColors.white,
+      titleTextStyle: InktomeTextStyles.headingLarge.copyWith(
+        color: InktomeColors.white,
       ),
       // systemOverlayStyle: const SystemUiOverlayStyle(
       //   statusBarColor: Colors.transparent,
@@ -343,7 +343,7 @@ ThemeData inktomeDarkTheme() {
       style: FilledButton.styleFrom(
         backgroundColor: InktomeColors.white,
         foregroundColor: InktomeColors.black,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.black),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.black),
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.lg,
@@ -362,7 +362,7 @@ ThemeData inktomeDarkTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: InktomeColors.white,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.white),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.white),
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.lg,
@@ -380,7 +380,7 @@ ThemeData inktomeDarkTheme() {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: InktomeColors.white,
-        textStyle: InktomeTextStyles.buttonWithColor(InktomeColors.white),
+        textStyle: InktomeTextStyles.button.copyWith(color: InktomeColors.white),
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.sm,
           vertical: InktomeSpacing.xs,
@@ -425,12 +425,12 @@ ThemeData inktomeDarkTheme() {
           width: 2.0,
         ),
       ),
-      hintStyle: InktomeTextStyles.bodyWithColor(InktomeColors.greyOnDark),
-      labelStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.greyOnDark,
+      hintStyle: InktomeTextStyles.body.copyWith(color: InktomeColors.greyOnDark),
+      labelStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.greyOnDark,
       ),
-      errorStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.brickEmber,
+      errorStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.brickEmber,
       ),
     ),
 
@@ -447,9 +447,9 @@ ThemeData inktomeDarkTheme() {
     chipTheme: ChipThemeData(
       backgroundColor: Colors.transparent,
       selectedColor: InktomeColors.white,
-      labelStyle: InktomeTextStyles.labelLargeWithColor(InktomeColors.white),
-      secondaryLabelStyle: InktomeTextStyles.labelLargeWithColor(
-        InktomeColors.black,
+      labelStyle: InktomeTextStyles.labelLarge.copyWith(color: InktomeColors.white),
+      secondaryLabelStyle: InktomeTextStyles.labelLarge.copyWith(
+        color: InktomeColors.black,
       ),
       side: const BorderSide(color: InktomeColors.greyDark, width: 1.0),
       padding: const EdgeInsets.symmetric(

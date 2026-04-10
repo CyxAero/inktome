@@ -223,7 +223,7 @@ class _TextPlaceholder extends StatelessWidget {
             if (title.isNotEmpty)
               Text(
                 title,
-                style: InktomeTextStyles.headingSmallWithColor(titleColor),
+                style: InktomeTextStyles.headingSmall.copyWith(color: titleColor),
                 textAlign: TextAlign.center,
                 maxLines: 5,
                 overflow: TextOverflow.ellipsis,
@@ -233,7 +233,7 @@ class _TextPlaceholder extends StatelessWidget {
             if (author.isNotEmpty)
               Text(
                 author,
-                style: InktomeTextStyles.labelWithColor(authorColor),
+                style: InktomeTextStyles.label.copyWith(color: authorColor),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

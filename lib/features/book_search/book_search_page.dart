@@ -102,7 +102,10 @@ class _BookSearchPageState extends State<BookSearchPage> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('search results'),
+          title: Text(
+            'search results',
+            style: InktomeTextStyles.headingLarge.copyWith(color: textColor),
+          ),
           automaticallyImplyLeading: false,
         ),
         body: Stack(
@@ -230,7 +233,7 @@ class _IdleState extends StatelessWidget {
         child: Text(
           'what book are you looking for?',
           textAlign: TextAlign.center,
-          style: InktomeTextStyles.headingMediumWithColor(labelColor),
+          style: InktomeTextStyles.headingMedium.copyWith(color: labelColor),
         ),
       ),
     );
@@ -309,7 +312,7 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Text(
         'nothing found.',
-        style: InktomeTextStyles.headingMediumWithColor(labelColor),
+        style: InktomeTextStyles.headingMedium.copyWith(color: labelColor),
       ),
     );
   }
@@ -334,7 +337,7 @@ class _ErrorState extends StatelessWidget {
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: InktomeTextStyles.headingSmallWithColor(labelColor),
+          style: InktomeTextStyles.headingSmall.copyWith(color: labelColor),
         ),
       ),
     );

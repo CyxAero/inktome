@@ -82,8 +82,8 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
             child: Text(
               'ALIGN BARCODE INSIDE THE BOX',
               textAlign: TextAlign.center,
-              style: InktomeTextStyles.headingMediumWithColor(
-                foregroundColor,
+              style: InktomeTextStyles.headingMedium.copyWith(
+                color: foregroundColor,
               ).copyWith(fontSize: 20, letterSpacing: 1),
             ),
           ),
@@ -111,9 +111,9 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
                       child: Center(
                         child: Text(
                           'CANCEL',
-                          style: InktomeTextStyles.buttonWithColor(
-                            foregroundColor,
-                          ).copyWith(fontWeight: FontWeight.w900),
+                          style: InktomeTextStyles.button.copyWith(
+                            color: foregroundColor,
+                          ).copyWith(fontWeight: FontWeight.w100),
                         ),
                       ),
                     ),

@@ -278,13 +278,11 @@ class AddBookOverlayContentState extends State<AddBookOverlayContent>
                             onTap: _searchFocusNode.requestFocus,
                             child: Text(
                               'SEARCH ONLINE FOR MY BOOK',
-                              style:
-                                  InktomeTextStyles.buttonWithColor(
-                                    textColor,
-                                  ).copyWith(
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.w900,
-                                  ),
+                              style: InktomeTextStyles.labelLarge.copyWith(
+                                color: textColor,
+                                fontSize: InktomeSpacing.buttonText,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
                         ),
@@ -390,9 +388,9 @@ class _StaggeredOptionLabel extends StatelessWidget {
               Text(
                 option.label,
                 textAlign: TextAlign.right,
-                style: InktomeTextStyles.headingMediumWithColor(
-                  textColor,
-                ).copyWith(fontSize: screenSize.width * 0.10),
+                style: InktomeTextStyles.headingMedium
+                    .copyWith(color: textColor)
+                    .copyWith(fontSize: screenSize.width * 0.10),
               ),
               LucideAnimatedIcon(
                 icon: option.icon,

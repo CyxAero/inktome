@@ -25,7 +25,7 @@ class AppearanceSection extends StatelessWidget {
       children: [
         Text(
           'appearance',
-          style: InktomeTextStyles.headingSmallWithColor(textColor),
+          style: InktomeTextStyles.headingSmall.copyWith(color: textColor),
         ),
         SizedBox(height: InktomeSpacing.md),
         _ThemeSelector(currentMode: currentMode),
@@ -131,7 +131,7 @@ class _ThemeCard extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               style: InktomeTextStyles.labelLarge.copyWith(
                 color: labelColor.withValues(alpha: isSelected ? 1.0 : 0.45),
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w400 : FontWeight.w300,
               ),
               child: Text(label),
             ),

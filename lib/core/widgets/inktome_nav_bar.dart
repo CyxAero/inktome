@@ -381,7 +381,7 @@ class _NavTabItem extends StatelessWidget {
           label,
           style: InktomeTextStyles.button.copyWith(
             color: isSelected ? selectedPillFg : pillFg,
-            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w300,
+            fontWeight: FontWeight.w300,
             fontSize: 18,
           ),
         ),

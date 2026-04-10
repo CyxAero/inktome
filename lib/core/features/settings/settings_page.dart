@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inktome/core/features/settings/sections/appearance_section.dart';
 import 'package:inktome/core/theme/inktome_colors.dart';
 import 'package:inktome/core/theme/inktome_spacing.dart';
+import 'package:inktome/core/theme/inktome_typography.dart';
 import 'package:inktome/core/theme/theme_notifier.dart';
 import 'package:inktome/core/widgets/custom_dashed_border.dart';
 import 'package:inktome/core/widgets/inktome_card.dart';
@@ -34,7 +35,12 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('settings')),
+      appBar: AppBar(
+        title: Text(
+          'settings',
+          style: InktomeTextStyles.headingLarge.copyWith(color: textColor),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: InktomeSpacing.pagePadding,

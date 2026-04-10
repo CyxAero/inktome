@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:inktome/core/data/database/inktome_database.dart';
 import 'package:inktome/core/data/repositories/book_repository.dart';
 import 'package:inktome/core/data/services/book_search_service.dart';
@@ -12,6 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+
+  // Use bundled font assets — no network fetch, ever.
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // Database is created once here and passed into the repository.
   // Nothing else in the app imports InktomeDatabase directly.

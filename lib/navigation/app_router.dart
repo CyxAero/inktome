@@ -6,7 +6,7 @@ import 'package:inktome/core/features/library/library_page.dart';
 import 'package:inktome/core/features/settings/settings_page.dart';
 import 'package:inktome/features/barcode_scanner/barcode_scanner_page.dart';
 // import 'package:inktome/features/book_detail/book_detail_page.dart';
-import 'package:inktome/features/book_detail/new_book_detail.dart';
+import 'package:inktome/features/book_detail/book_detail.dart';
 import 'package:inktome/features/book_detail/streamed_books_detail_page.dart';
 import 'package:inktome/features/book_search/book_search_page.dart';
 import 'package:inktome/navigation/app_shell.dart';
