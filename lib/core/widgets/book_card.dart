@@ -110,7 +110,6 @@ class BookCard extends StatelessWidget {
 // as siblings) meant the error widget couldn't see them.
 class _CoverContent extends StatelessWidget {
   const _CoverContent({
-    super.key,
     required this.url,
     required this.title,
     required this.author,
@@ -199,7 +198,6 @@ class _ShimmerState extends State<_Shimmer>
 // Uses Londrina Solid for the title so it looks intentional, not broken.
 class _TextPlaceholder extends StatelessWidget {
   const _TextPlaceholder({
-    super.key,
     required this.title,
     required this.author,
     required this.isDark,

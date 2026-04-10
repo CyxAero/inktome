@@ -69,7 +69,7 @@ class _LibraryPageState extends State<LibraryPage> {
 // Tapping the dashed placeholder opens the add-book overlay — same
 // action as the nav bar + button, so there are two obvious paths to adding.
 class _EmptyLibrary extends StatelessWidget {
-  const _EmptyLibrary({super.key});
+  const _EmptyLibrary();
 
   @override
   Widget build(BuildContext context) {

@@ -31,56 +31,34 @@ class FilledHome extends StatelessWidget {
       orElse: () => books.first,
     );
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: InktomeSpacing.pagePadding,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: InktomeSpacing.lg),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: InktomeSpacing.pagePadding,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: InktomeSpacing.xxl),
 
-            // Greeting
-            Text(
-              'Hello,',
-              style: InktomeTextStyles.headingLarge.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w900,
-                height: 0.6,
-              ),
-            ),
-            Text(
-              'Reader!',
+          // Section label
+          Center(
+            child: Text(
+              'Currently Reading',
               style: InktomeTextStyles.body.copyWith(
+                fontSize: 32,
+                height: 0.2,
                 color: textColor,
-                height: 1.0,
-                fontSize: 52,
               ),
             ),
+          ),
 
-            const SizedBox(height: InktomeSpacing.xxl),
+          // Currently reading card — taps through to the book detail page
+          CurrentlyReadingCard(book: currentBook, isDark: isDark),
 
-            // Section label
-            Center(
-              child: Text(
-                'Currently Reading',
-                style: InktomeTextStyles.body.copyWith(
-                  fontSize: 32,
-                  height: 0.2,
-                  color: textColor,
-                ),
-              ),
-            ),
-
-            // Currently reading card — taps through to the book detail page
-            CurrentlyReadingCard(book: currentBook, isDark: isDark),
-
-            const SizedBox(
-              height: InktomeSpacing.navBarPillHeight + InktomeSpacing.xxl,
-            ),
-          ],
-        ),
+          const SizedBox(
+            height: InktomeSpacing.navBarPillHeight + InktomeSpacing.xl,
+          ),
+        ],
       ),
     );
   }

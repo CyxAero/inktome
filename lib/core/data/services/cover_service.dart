@@ -34,7 +34,7 @@ class CoverService {
   final _client = http.Client();
 
   // MARK: Download from URL
-  /// Downloads the cover at [url] and saves it as covers/<bookId>.jpg.
+  /// Downloads the cover at [url] and saves it as covers/bookId.jpg.
   ///
   /// Returns the saved file path on success, null on any failure.
   /// Never throws — cover failure is always non-fatal.
